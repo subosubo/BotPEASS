@@ -8,7 +8,9 @@ import vulners
 
 from os.path import join
 from enum import Enum
-from discord import Webhook, RequestsWebhookAdapter
+from discord import Webhook
+
+from keep_alive import keep_alive
 
 CIRCL_LU_URL = "https://cve.circl.lu/api/query"
 CVES_JSON_PATH = join(pathlib.Path(__file__).parent.absolute(), "output/bopteas.json")
@@ -301,7 +303,7 @@ def send_discord_message(message: str, public_expls_msg: str):
         message = message + "\n" + public_expls_msg
 
     message = message.replace("(", "\(").replace(")", "\)").replace("_", "").replace("[","\[").replace("]","\]").replace("{","\{").replace("}","\}").replace("=","\=")
-    webhook = Webhook.from_url(discord_webhok_url, adapter=RequestsWebhookAdapter())
+    webhook = Webhook.from_url(discord_webhok_url)
     if public_expls_msg:
         message = message + "\n" + public_expls_msg
     
@@ -310,6 +312,9 @@ def send_discord_message(message: str, public_expls_msg: str):
 #################### MAIN #########################
 
 def main():
+
+    keep_alive() #http server to
+    
     #Load configured keywords
     load_keywords()
 
