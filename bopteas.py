@@ -327,8 +327,8 @@ def main():
         public_exploits = search_exploits(new_cve['id'])
         cve_message = generate_new_cve_message(new_cve)
         public_expls_msg = generate_public_expls_message(public_exploits)
-        send_slack_mesage(cve_message, public_expls_msg)
-        send_telegram_message(cve_message, public_expls_msg)
+        #send_slack_mesage(cve_message, public_expls_msg)
+        #send_telegram_message(cve_message, public_expls_msg)
         send_discord_message(cve_message, public_expls_msg)
     
     #Find and publish modified CVEs
@@ -342,8 +342,9 @@ def main():
         public_exploits = search_exploits(modified_cve['id'])
         cve_message = generate_modified_cve_message(modified_cve)
         public_expls_msg = generate_public_expls_message(public_exploits)
-        send_slack_mesage(cve_message, public_expls_msg)
-        send_telegram_message(cve_message, public_expls_msg)
+        #send_slack_mesage(cve_message, public_expls_msg)
+        #send_telegram_message(cve_message, public_expls_msg)
+        send_discord_message(cve_message, public_expls_msg)
 
     #Update last times
     update_lasttimes()

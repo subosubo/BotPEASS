@@ -22,7 +22,7 @@ jobs:
         run: python3 bopteas.py
         shell: bash
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }} #ok
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }} 
           VULNERS_API_KEY: ${{ secrets.VULNERS_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

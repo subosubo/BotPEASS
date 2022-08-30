@@ -1,4 +1,4 @@
-ALL_VALID: no
+ALL_VALID: False
 
 DESCRIPTION_KEYWORDS_I:
 - privilege escalation
@@ -18,6 +18,8 @@ DESCRIPTION_KEYWORDS_I:
 - kubernetes
 - " lxc "
 - podman
+- remote command execution
+- command injection vulnerability
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
@@ -29,7 +31,12 @@ PRODUCT_KEYWORDS_I:
 - lxc
 - podman
 - container
+- Amazon
+- aws
+- Atlassian
+- apple
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
+
 
