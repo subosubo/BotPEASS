@@ -5,12 +5,12 @@ import json
 import os
 import yaml
 import vulners
-
 from os.path import join
 from enum import Enum
 from discord import Webhook
+from aiohttp import ClientSession
 
-from keep_alive import keep_alive
+#from keep_alive import keep_alive
 
 CIRCL_LU_URL = "https://cve.circl.lu/api/query"
 CVES_JSON_PATH = join(pathlib.Path(__file__).parent.absolute(), "output/bopteas.json")
@@ -24,7 +24,6 @@ DESCRIPTION_KEYWORDS_I = []
 DESCRIPTION_KEYWORDS = []
 PRODUCT_KEYWORDS_I = []
 PRODUCT_KEYWORDS = []
-
 
 class Time_Type(Enum):
     PUBLISHED = "Published"
@@ -291,6 +290,7 @@ def send_telegram_message(message: str, public_expls_msg: str):
 
             
 def send_discord_message(message: str, public_expls_msg: str):
+    
     ''' Send a message to the discord channel webhook '''
 
     discord_webhok_url = os.getenv('DISCORD_WEBHOOK_URL')
@@ -303,17 +303,18 @@ def send_discord_message(message: str, public_expls_msg: str):
         message = message + "\n" + public_expls_msg
 
     message = message.replace("(", "\(").replace(")", "\)").replace("_", "").replace("[","\[").replace("]","\]").replace("{","\{").replace("}","\}").replace("=","\=")
-    webhook = Webhook.from_url(discord_webhok_url)
-    if public_expls_msg:
-        message = message + "\n" + public_expls_msg
-    
-    webhook.send(message)
+
+    with ClientSession() as session:
+        webhook = Webhook.from_url(discord_webhok_url, session)
+        if public_expls_msg:
+            message = message + "\n" + public_expls_msg
+        webhook.send(message)
 
 #################### MAIN #########################
 
 def main():
 
-    keep_alive() #http server to
+    #keep_alive() #http server to
     
     #Load configured keywords
     load_keywords()

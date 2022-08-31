@@ -1,15 +1,22 @@
-from flask import Flask
 from threading import Thread
+from flask import Flask, request
+import botpeas
 
 app = Flask('')
 
-@app.route('/')
+@app.route('/', methods = ['HEAD','GET'])
 def home():
-    return "Ah, ha, ha, ha, stayin' alive."
+    if request.method == 'HEAD':
+        botpeas.main()
+        
+    return 'Stayin Alive'
 
 def run():
     app.run(host = '0.0.0.0', port=8080)
 
-def keep_alive():
+def main():
     t = Thread(target = run)
     t.start()
+
+if __name__ == "__main__":
+    main()
