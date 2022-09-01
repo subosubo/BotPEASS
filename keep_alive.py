@@ -1,22 +1,19 @@
-from threading import Thread
-from flask import Flask, request
-import botpeas
+#from threading import Thread
+from flask import Flask
 
-app = Flask('')
+app = Flask(__name__)
 
 @app.route('/', methods = ['HEAD','GET'])
-def home():
-    if request.method == 'HEAD':
-        botpeas.main()
+async def home():
+    #if request.method == 'HEAD':
+    #    await botpeas.main()
         
     return 'Stayin Alive'
 
-def run():
-    app.run(host = '0.0.0.0', port=8080)
+def keep_alive():
+    from waitress import serve
+    serve(app, host = "0.0.0.0", port=5000, clear_untrusted_proxy_headers = False)
 
-def main():
-    t = Thread(target = run)
-    t.start()
 
 if __name__ == "__main__":
-    main()
+    keep_alive()

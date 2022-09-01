@@ -244,6 +244,14 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "schedule"
+version = "1.1.0"
+description = "Job scheduling for humans."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "sgmllib3k"
 version = "1.0.0"
 description = "Py3k port of sgmllib."
@@ -286,6 +294,18 @@ requests = "*"
 six = "*"
 
 [[package]]
+name = "waitress"
+version = "2.1.2"
+description = "Waitress WSGI server"
+category = "main"
+optional = false
+python-versions = ">=3.7.0"
+
+[package.extras]
+docs = ["Sphinx (>=1.8.1)", "docutils", "pylons-sphinx-themes (>=1.0.9)"]
+testing = ["pytest", "pytest-cover", "coverage (>=5.0)"]
+
+[[package]]
 name = "werkzeug"
 version = "2.2.2"
 description = "The comprehensive WSGI web application library."
@@ -326,7 +346,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "8ba1f1746b2017883416a1b4173c909c332891f7457b9d85178f437b606d771b"
+content-hash = "4778f0759f2c5774fbaac418d3494acbb8075178f56403b45f59b8e901a6a1ba"
 
 [metadata.files]
 aiohttp = []
@@ -350,10 +370,12 @@ jinja2 = []
 markupsafe = []
 multidict = []
 requests = []
+schedule = []
 sgmllib3k = []
 six = []
 urllib3 = []
 vulners = []
+waitress = []
 werkzeug = []
 yarl = []
 zipp = []

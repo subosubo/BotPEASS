@@ -7,10 +7,10 @@ import yaml
 import vulners
 from os.path import join
 from enum import Enum
-from discord import Webhook
-from aiohttp import ClientSession
-
-#from keep_alive import keep_alive
+from discord import Webhook, Embed, Color
+import aiohttp, asyncio
+import keep_alive
+import time, schedule
 
 CIRCL_LU_URL = "https://cve.circl.lu/api/query"
 CVES_JSON_PATH = join(pathlib.Path(__file__).parent.absolute(), "output/bopteas.json")
@@ -165,9 +165,9 @@ def is_prod_keyword_present(products: str):
 
 def search_exploits(cve: str) -> list:
     ''' Given a CVE it will search for public exploits to abuse it '''
-    
+    #use bot commands to find exploits for particular CVE
     return []
-    #TODO: Find a better way to discover exploits
+    
 
     vulners_api_key = os.getenv('VULNERS_API_KEY')
     
@@ -184,43 +184,66 @@ def search_exploits(cve: str) -> list:
 
 #################### GENERATE MESSAGES #########################
 
-def generate_new_cve_message(cve_data: dict) -> str:
+def generate_new_cve_message(cve_data: dict) -> Embed:
     ''' Generate new CVE message for sending to slack '''
-
-    message = f"🚨  *{cve_data['id']}*  🚨\n"
-    message += f"🔮  *CVSS*: {cve_data['cvss']}\n"
-    message += f"📅  *Published*: {cve_data['Published']}\n"
-    message += "📓  *Summary*: " 
-    message += cve_data["summary"] if len(cve_data["summary"]) < 500 else cve_data["summary"][:500] + "..."
     
+    #embed = Embed(title="cve_data['id']")
+    nl = '\n'
+    embed = Embed(title = f"🚨  *{cve_data['id']}*  🚨", 
+                  description = cve_data["summary"] if len(cve_data["summary"]) < 500 else cve_data["summary"][:500] + "...",
+                  timestamp = datetime.datetime.utcnow(),
+                  color = Color.blue())
+    embed.add_field(name = f"🔮  *CVSS*", value = f"{cve_data['cvss']}", inline = True)
+    embed.add_field(name = f"📅  *Published*", value = f"{cve_data['Published']}", inline = True)
     if cve_data["vulnerable_configuration"]:
-        message += f"\n🔓  *Vulnerable* (_limit to 10_): " + ", ".join(cve_data["vulnerable_configuration"][:10])
+        embed.add_field(name = f"\n🔓  *Vulnerable* (_limit to 10_)", value = f"cve_data['vulnerable_configuration'][:10]")
+
+    embed.add_field(name = f"More Information (_limit to 5_)", value = f"{nl.join(cve_data['references'][:5])}", inline = False)
     
-    message += "\n\n🟢 ℹ️  *More information* (_limit to 5_)\n" + "\n".join(cve_data["references"][:5])
+    #message = f"🚨  *{cve_data['id']}*  🚨\n"
+    #message += f"🔮  *CVSS*: {cve_data['cvss']}\n"
+    #message += f"📅  *Published*: {cve_data['Published']}\n"
+    #message += "📓  *Summary*: " 
+    #message += cve_data["summary"] if len(cve_data["summary"]) < 500 else cve_data["summary"][:500] + "..."
     
-    message += "\n"
+    #if cve_data["vulnerable_configuration"]:
+    #    message += f"\n🔓  *Vulnerable* (_limit to 10_): " + ", ".join(cve_data["vulnerable_configuration"][:10])
+    
+    #message += "\n\n🟢 ℹ️  *More information* (_limit to 5_)\n" + "\n".join(cve_data["references"][:5])
+    
+    #message += "\n"
 
     #message += "\n\n(Check the bots description for more information about the bot)\n"
     
-    return message
+    #return message
+    return embed
 
 
-def generate_modified_cve_message(cve_data: dict) -> str:
+def generate_modified_cve_message(cve_data: dict) -> Embed:
     ''' Generate modified CVE message for sending to slack '''
 
-    message = f"📣 *{cve_data['id']}*(_{cve_data['cvss']}_) was modified the {cve_data['last-modified'].split('T')[0]} (_originally published the {cve_data['Published'].split('T')[0]}_)\n"
-    return message
+    embed = Embed(title = f"📣 *{cve_data['id']} Modified*",
+                  description = f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
+                  timestamp = datetime.datetime.utcnow(),
+                  color = Color.gold())
+    embed.set_footer(text = f"(First published on {cve_data['Published'].split('T')[0]}_)\n")
 
+    #message = f"📣 *{cve_data['id']}*(_{cve_data['cvss']}_) was modified the {cve_data['last-modified'].split('T')[0]} (_originally published the {cve_data['Published'].split('T')[0]}_)\n"
+    #return message
+    return embed
 
-def generate_public_expls_message(public_expls: list) -> str:
+def generate_public_expls_message(public_expls: list) -> Embed:
     ''' Given the list of public exploits, generate the message '''
 
-    message = ""
+    embed = Embed(title = f"Public Exploits located")
+    embed.add_field(name = f"More Information (_limit to 20_)", value = f"{public_expls[:20]}", inline = False)
+    return embed
+    #message = ""
 
-    if public_expls:
-        message = "😈  *Public Exploits* (_limit 20_)  😈\n" + "\n".join(public_expls[:20])
+    #if public_expls:
+    #    message = "😈  *Public Exploits* (_limit 20_)  😈\n" + "\n".join(public_expls[:20])
 
-    return message
+    #return message
 
 
 #################### SEND MESSAGES #########################
@@ -289,7 +312,7 @@ def send_telegram_message(message: str, public_expls_msg: str):
             print("ERROR SENDING TO TELEGRAM: "+ message.split("\n")[0] + resp["description"])
 
             
-def send_discord_message(message: str, public_expls_msg: str):
+async def send_discord_message(message: Embed, public_expls_msg: str):
     
     ''' Send a message to the discord channel webhook '''
 
@@ -299,22 +322,25 @@ def send_discord_message(message: str, public_expls_msg: str):
         print("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
         return
     
-    if public_expls_msg:
-        message = message + "\n" + public_expls_msg
+    #if public_expls_msg:
+    #    message = message + "\n" + public_expls_msg
 
-    message = message.replace("(", "\(").replace(")", "\)").replace("_", "").replace("[","\[").replace("]","\]").replace("{","\{").replace("}","\}").replace("=","\=")
+    #message = message.replace("(", "\(").replace(")", "\)").replace("_", "").replace("[","\[").replace("]","\]").replace("{","\{").replace("}","\}").replace("=","\=")
 
-    with ClientSession() as session:
-        webhook = Webhook.from_url(discord_webhok_url, session)
-        if public_expls_msg:
-            message = message + "\n" + public_expls_msg
-        webhook.send(message)
+    #if public_expls_msg:
+    #    message = message + "\n" + public_expls_msg
+    
+    await sendtoWebhook(WebHookURL=discord_webhok_url, content=message)
 
-#################### MAIN #########################
+async def sendtoWebhook(WebHookURL: str, content: Embed):
+    async with aiohttp.ClientSession() as session:
+        webhook = Webhook.from_url(WebHookURL, session=session)
+        await webhook.send(embed=content)
+              
+    
 
-def main():
 
-    #keep_alive() #http server to
+async def itscheckintime():
     
     #Load configured keywords
     load_keywords()
@@ -334,7 +360,7 @@ def main():
         public_expls_msg = generate_public_expls_message(public_exploits)
         #send_slack_mesage(cve_message, public_expls_msg)
         #send_telegram_message(cve_message, public_expls_msg)
-        send_discord_message(cve_message, public_expls_msg)
+        await send_discord_message(cve_message, public_expls_msg)
     
     #Find and publish modified CVEs
     modified_cves = get_modified_cves()
@@ -349,11 +375,20 @@ def main():
         public_expls_msg = generate_public_expls_message(public_exploits)
         #send_slack_mesage(cve_message, public_expls_msg)
         #send_telegram_message(cve_message, public_expls_msg)
-        send_discord_message(cve_message, public_expls_msg)
+        await send_discord_message(cve_message, public_expls_msg)
 
     #Update last times
     update_lasttimes()
+    
+#################### MAIN #########################
 
+#def main():
+#    keep_alive()
+#    schedule.every(1).minutes.do(itscheckintime)
+#    while True:
+#        schedule.run_pending()
+#        time.sleep(1)
 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+    #asyncio.run(main())
+    #main()

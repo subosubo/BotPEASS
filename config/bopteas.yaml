@@ -7,6 +7,7 @@ DESCRIPTION_KEYWORDS_I:
 - high integrity
 - elevated privilege
 - escalation of privilege
+- privilege escalation
 - " sudo "
 - " suid "
 - " pe "
@@ -20,6 +21,7 @@ DESCRIPTION_KEYWORDS_I:
 - podman
 - remote command execution
 - command injection vulnerability
+- denial of service
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
@@ -31,10 +33,12 @@ PRODUCT_KEYWORDS_I:
 - lxc
 - podman
 - container
-- Amazon
+- amazon
 - aws
-- Atlassian
+- atlassian
 - apple
+- azure
+- wordpress
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
