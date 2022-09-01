@@ -13,8 +13,6 @@ DESCRIPTION_KEYWORDS_I:
 - " pe "
 - " UAC "
 - User Account Control
-- linpeas
-- winpeas
 - docker
 - kubernetes
 - " lxc "
@@ -22,6 +20,7 @@ DESCRIPTION_KEYWORDS_I:
 - remote command execution
 - command injection vulnerability
 - denial of service
+- buffer overflow
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample

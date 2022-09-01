@@ -29,6 +29,7 @@ class Time_Type(Enum):
     PUBLISHED = "Published"
     LAST_MODIFIED = "last-modified"
 
+#TO_DO: add logging, search exploit - bot commands (explore shodan exploit, vulners, exploitdb), 
 
 ################## LOAD CONFIGURATIONS ####################
 
@@ -215,7 +216,9 @@ def generate_modified_cve_message(cve_data: dict) -> Embed:
 def generate_public_expls_message(public_expls: list) -> Embed:
     ''' Given the list of public exploits, generate the message '''
 
-    embed = Embed(title = f"Public Exploits located")
+    embed = Embed(title = f"**Public Exploits located**",
+                 timestamp = datetime.datetime.utcnow(),
+                 color = Color.Red())
     embed.add_field(name = f"More Information (_limit to 20_)", value = f"{public_expls[:20]}", inline = False)
     return embed
 
@@ -296,6 +299,7 @@ async def send_discord_message(message: Embed, public_expls_msg: str):
         return
     
     await sendtoWebhook(WebHookURL=discord_webhok_url, content=message)
+
 
 async def sendtoWebhook(WebHookURL: str, content: Embed):
     async with aiohttp.ClientSession() as session:
