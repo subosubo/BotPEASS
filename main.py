@@ -26,8 +26,6 @@ DESCRIPTION_KEYWORDS = []
 PRODUCT_KEYWORDS_I = []
 PRODUCT_KEYWORDS = []
 
-SHODAN_EXPLOIT_URL = "https://exploits.shodan.io/api"
-
 class Time_Type(Enum):
     PUBLISHED = "Published"
     LAST_MODIFIED = "last-modified"
@@ -37,8 +35,6 @@ logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='cve_reporter_discord.log', encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
-
-#TO_DO: add logging, search exploit - bot commands (explore shodan exploit, vulners, exploitdb), 
 
 ################## LOAD CONFIGURATIONS ####################
 
@@ -76,6 +72,7 @@ def load_lasttimes():
 
     except Exception as e: #If error, just keep the fault date (today - 1 day)
         print(f"ERROR, using default last times.\n{e}")
+        logger.error(e)
         pass
 
     print(f"Last new cve: {LAST_NEW_CVE}")
@@ -374,7 +371,7 @@ async def itscheckintime():
 if __name__ == "__main__":
     keep_alive()
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(itscheckintime, 'interval', minutes=10)
+    scheduler.add_job(itscheckintime, 'interval', minutes=5)
     scheduler.start()
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
 
