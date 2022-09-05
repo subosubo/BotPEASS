@@ -38,6 +38,14 @@ PRODUCT_KEYWORDS_I:
 - apple
 - azure
 - wordpress
+- npm
+- python
+- MySQL 
+- NoSQL
+- SQL
+- MSSQL
+- Git
+- Github
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample

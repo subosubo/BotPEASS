@@ -11,6 +11,7 @@ from discord import Webhook, Embed, Color
 import aiohttp, asyncio
 from keep_alive import keep_alive
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import logging, sys
 
 CIRCL_LU_URL = "https://cve.circl.lu/api/query"
 CVES_JSON_PATH = join(pathlib.Path(__file__).parent.absolute(), "output/bopteas.json")
@@ -25,9 +26,17 @@ DESCRIPTION_KEYWORDS = []
 PRODUCT_KEYWORDS_I = []
 PRODUCT_KEYWORDS = []
 
+SHODAN_EXPLOIT_URL = "https://exploits.shodan.io/api"
+
 class Time_Type(Enum):
     PUBLISHED = "Published"
     LAST_MODIFIED = "last-modified"
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='cve_reporter_discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 #TO_DO: add logging, search exploit - bot commands (explore shodan exploit, vulners, exploitdb), 
 
@@ -39,16 +48,20 @@ def load_keywords():
     global ALL_VALID
     global DESCRIPTION_KEYWORDS_I, DESCRIPTION_KEYWORDS
     global PRODUCT_KEYWORDS_I, PRODUCT_KEYWORDS
-
-    with open(KEYWORDS_CONFIG_PATH, 'r') as yaml_file:
-        keywords_config = yaml.safe_load(yaml_file)
-        print(f"Loaded keywords: {keywords_config}")
-        ALL_VALID = keywords_config["ALL_VALID"]
-        DESCRIPTION_KEYWORDS_I = keywords_config["DESCRIPTION_KEYWORDS_I"]
-        DESCRIPTION_KEYWORDS = keywords_config["DESCRIPTION_KEYWORDS"]
-        PRODUCT_KEYWORDS_I = keywords_config["PRODUCT_KEYWORDS_I"]
-        PRODUCT_KEYWORDS = keywords_config["PRODUCT_KEYWORDS"]
-
+    try:
+        
+        with open(KEYWORDS_CONFIG_PATH, 'r') as yaml_file:
+            keywords_config = yaml.safe_load(yaml_file)
+            print(f"Loaded keywords: {keywords_config}")
+            ALL_VALID = keywords_config["ALL_VALID"]
+            DESCRIPTION_KEYWORDS_I = keywords_config["DESCRIPTION_KEYWORDS_I"]
+            DESCRIPTION_KEYWORDS = keywords_config["DESCRIPTION_KEYWORDS"]
+            PRODUCT_KEYWORDS_I = keywords_config["PRODUCT_KEYWORDS_I"]
+            PRODUCT_KEYWORDS = keywords_config["PRODUCT_KEYWORDS"]
+            
+    except Exception as e:
+        logger.error(e)
+        sys.exit(1)
 
 def load_lasttimes():
     ''' Load lasttimes from json file '''
@@ -154,7 +167,7 @@ def is_summ_keyword_present(summary: str):
     ''' Given the summary check if any keyword is present '''
 
     return any(w in summary for w in DESCRIPTION_KEYWORDS) or \
-            any(w.lower() in summary.lower() for w in DESCRIPTION_KEYWORDS_I)
+            any(w.lower() in summary.lower() for w in DESCRIPTION_KEYWORDS_I) #for each of the word in description keyword config, check if it exists in summary.
 
 
 def is_prod_keyword_present(products: str):
@@ -193,7 +206,10 @@ def generate_new_cve_message(cve_data: dict) -> Embed:
                   description = cve_data["summary"] if len(cve_data["summary"]) < 500 else cve_data["summary"][:500] + "...",
                   timestamp = datetime.datetime.utcnow(),
                   color = Color.blue())
+    #if cve_data["cvss"] == "None":
     embed.add_field(name = f"🔮  *CVSS*", value = f"{cve_data['cvss']}", inline = True)
+    #else:
+        #embed.add_field(name = f"🔮  *CVSS*", value = f"{cve_data['cvss']}/{cve_data['cvss-vector']}", inline = True)
     embed.add_field(name = f"📅  *Published*", value = f"{cve_data['Published']}", inline = True)
     if cve_data["vulnerable_configuration"]:
         embed.add_field(name = f"\n🔓  *Vulnerable* (_limit to 10_)", value = f"cve_data['vulnerable_configuration'][:10]")
@@ -218,7 +234,7 @@ def generate_public_expls_message(public_expls: list) -> Embed:
 
     embed = Embed(title = f"**Public Exploits located**",
                  timestamp = datetime.datetime.utcnow(),
-                 color = Color.Red())
+                 color = Color.red())
     embed.add_field(name = f"More Information (_limit to 20_)", value = f"{public_expls[:20]}", inline = False)
     return embed
 
@@ -310,45 +326,50 @@ async def sendtoWebhook(WebHookURL: str, content: Embed):
 #################### CHECKING for CVE ######################### 
 
 async def itscheckintime():
-    
-    #Load configured keywords
-    load_keywords()
 
-    #Start loading time of last checked ones
-    load_lasttimes()
-
-    #Find a publish new CVEs
-    new_cves = get_new_cves()
+    try:
+        #Load configured keywords
+        load_keywords()
     
-    new_cves_ids = [ncve['id'] for ncve in new_cves]
-    print(f"New CVEs discovered: {new_cves_ids}")
+        #Start loading time of last checked ones
+        load_lasttimes()
     
-    for new_cve in new_cves:
-        public_exploits = search_exploits(new_cve['id'])
-        cve_message = generate_new_cve_message(new_cve)
-        public_expls_msg = generate_public_expls_message(public_exploits)
-        #send_slack_mesage(cve_message, public_expls_msg)
-        #send_telegram_message(cve_message, public_expls_msg)
-        await send_discord_message(cve_message, public_expls_msg)
+        #Find a publish new CVEs
+        new_cves = get_new_cves()
+        
+        new_cves_ids = [ncve['id'] for ncve in new_cves]
+        print(f"New CVEs discovered: {new_cves_ids}")
+        
+        for new_cve in new_cves:
+            public_exploits = search_exploits(new_cve['id'])
+            cve_message = generate_new_cve_message(new_cve)
+            public_expls_msg = generate_public_expls_message(public_exploits)
+            #send_slack_mesage(cve_message, public_expls_msg)
+            #send_telegram_message(cve_message, public_expls_msg)
+            await send_discord_message(cve_message, public_expls_msg)
+        
+        #Find and publish modified CVEs
+        modified_cves = get_modified_cves()
     
-    #Find and publish modified CVEs
-    modified_cves = get_modified_cves()
-
-    modified_cves = [mcve for mcve in modified_cves if not mcve['id'] in new_cves_ids]
-    modified_cves_ids = [mcve['id'] for mcve in modified_cves]
-    print(f"Modified CVEs discovered: {modified_cves_ids}")
+        modified_cves = [mcve for mcve in modified_cves if not mcve['id'] in new_cves_ids]
+        modified_cves_ids = [mcve['id'] for mcve in modified_cves]
+        print(f"Modified CVEs discovered: {modified_cves_ids}")
+        
+        for modified_cve in modified_cves:
+            public_exploits = search_exploits(modified_cve['id'])
+            cve_message = generate_modified_cve_message(modified_cve)
+            public_expls_msg = generate_public_expls_message(public_exploits)
+            #send_slack_mesage(cve_message, public_expls_msg)
+            #send_telegram_message(cve_message, public_expls_msg)
+            await send_discord_message(cve_message, public_expls_msg)
     
-    for modified_cve in modified_cves:
-        public_exploits = search_exploits(modified_cve['id'])
-        cve_message = generate_modified_cve_message(modified_cve)
-        public_expls_msg = generate_public_expls_message(public_exploits)
-        #send_slack_mesage(cve_message, public_expls_msg)
-        #send_telegram_message(cve_message, public_expls_msg)
-        await send_discord_message(cve_message, public_expls_msg)
+        #Update last times
+        update_lasttimes()
 
-    #Update last times
-    update_lasttimes()
-
+    except Exception as e:
+        logger.error(e)
+        sys.exit(1)
+        
 #################### MAIN #########################    
 if __name__ == "__main__":
     keep_alive()
