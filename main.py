@@ -222,7 +222,8 @@ def generate_modified_cve_message(cve_data: dict) -> Embed:
                   description = f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
                   timestamp = datetime.datetime.utcnow(),
                   color = Color.gold())
-    embed.set_footer(text = f"(First published on {cve_data['Published'].split('T')[0]}_)\n")
+    embed.add_field(name = f"🗣 *Summary*", value = cve_data["summary"] if len(cve_data["summary"]) < 500 else cve_data["summary"][:500] + "...", inline = False)
+    embed.set_footer(text = f"(First published on {cve_data['Published'].split('T')[0]})\n")
 
     return embed
 

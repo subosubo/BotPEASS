@@ -12,40 +12,55 @@ DESCRIPTION_KEYWORDS_I:
 - " suid "
 - " pe "
 - " UAC "
-- User Account Control
-- docker
-- kubernetes
 - " lxc "
-- podman
+- buffer overflow
+- User Account Control
+- Access Control vulnerability
 - remote command execution
 - command injection vulnerability
+- code execution
 - denial of service
-- buffer overflow
+- authentication bypass
+- file inclusion
+- XXE
+- XML External Entity
+- SQL injection
+- SQLi
+- Cross-Site-Scripting
+- Cross Site Scripting
+- Cross-Site Scripting
+- XSS
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
 
 PRODUCT_KEYWORDS_I:
-- sudo
-- docker
-- kubernetes
-- lxc
-- podman
-- container
 - amazon
 - aws
 - atlassian
 - apple
 - azure
-- wordpress
-- npm
-- python
-- MySQL 
-- NoSQL
-- SQL
-- MSSQL
+- Asus
+- container
+- docker
 - Git
 - Github
+- kubernetes
+- lxc
+- Linksys
+- PLC
+- MySQL 
+- MSSQL
+- npm
+- python
+- podman
+- NoSQL
+- SQL
+- TPlink
+- sudo
+- SCADA
+- kubernetes
+- wordpress
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
