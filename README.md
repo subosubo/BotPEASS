@@ -9,7 +9,7 @@ Keys Points here
 6. Runs on Async scheduler calling every 5 mins
 7. Kept alive on Replit IDE with UptimeRobot - https://www.youtube.com/watch?v=SPTfmiYiuok
 
-Dependencies
+**Dependencies**
 python = "^3.8"
 vulners = "^2.0.2"
 discord = "^2.0.0"
