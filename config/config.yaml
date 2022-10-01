@@ -19,6 +19,8 @@ DESCRIPTION_KEYWORDS_I:
 - remote command execution
 - command injection vulnerability
 - code execution
+- code injection
+- injection
 - denial of service
 - authentication bypass
 - file inclusion
@@ -26,10 +28,18 @@ DESCRIPTION_KEYWORDS_I:
 - XML External Entity
 - SQL injection
 - SQLi
-- Cross-Site-Scripting
-- Cross Site Scripting
-- Cross-Site Scripting
+- Cross-Site
+- Cross Site 
+- Cross-Site
 - XSS
+- Dom
+- Request Forgery
+- Smuggling
+- Pollution
+- Session hijack
+- Direct Object Reference
+- IDOR
+
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
@@ -61,6 +71,10 @@ PRODUCT_KEYWORDS_I:
 - SCADA
 - kubernetes
 - wordpress
+- whatsapp
+- signal
+- Google
+- telegram
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
