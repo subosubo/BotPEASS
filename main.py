@@ -108,6 +108,11 @@ def get_cves(tt_filter: Time_Type) -> dict:
     ''' Given the headers for the API retrive CVEs from cve.circl.lu '''
     now = datetime.datetime.now() - datetime.timedelta(days=1)
     now_str = now.strftime("%d-%m-%Y")
+    #https://cve.circl.lu/api/
+    #time_modifier	Timeframe for the CVEs, related to the start and end time
+    #time_start	Earliest time for a CVE
+    #time_type	Select which time is used for the filter
+    #limit	Limit the amount of vulnerabilities to return
 
     headers = {
         "time_modifier": "from",
