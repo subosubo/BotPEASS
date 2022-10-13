@@ -115,8 +115,8 @@ def get_cves(tt_filter: Time_Type) -> dict:
     #limit	Limit the amount of vulnerabilities to return
 
     headers = {
-        "time_modifier": "from",
-        "time_start": now_str,
+        #"time_modifier": "from",
+        #"time_start": now_str,
         "time_type": tt_filter.value,
         "limit": "100",
     }
