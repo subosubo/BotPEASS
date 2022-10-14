@@ -230,7 +230,7 @@ def generate_new_cve_message(cve_data: dict) -> Embed:
                     inline=True)
     if cve_data["vulnerable_configuration"]:
         embed.add_field(name=f"\n🔓  *Vulnerable* (_limit to 10_)",
-                        value=f"cve_data['vulnerable_configuration'][:10]")
+                        value=f"{cve_data['vulnerable_configuration'][:10]}")
     embed.add_field(name=f"More Information (_limit to 5_)",
                     value=f"{nl.join(cve_data['references'][:5])}",
                     inline=False)
