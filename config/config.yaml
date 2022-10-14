@@ -19,7 +19,6 @@ DESCRIPTION_KEYWORDS_I:
 - remote command execution
 - command injection vulnerability
 - code execution
-- code injection
 - injection
 - denial of service
 - authentication bypass
@@ -37,8 +36,12 @@ DESCRIPTION_KEYWORDS_I:
 - Smuggling
 - Pollution
 - Session hijack
-- Direct Object Reference
+- direct Object Reference
 - IDOR
+- Open redirect
+- Variable Overloading
+- Puzzling
+- resource manipulation
 
 
 DESCRIPTION_KEYWORDS:
