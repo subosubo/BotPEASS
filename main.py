@@ -146,7 +146,7 @@ def get_modified_cves() -> list:
     cves = get_cves(Time_Type.LAST_MODIFIED)
     filtered_cves, new_last_time = filter_cves(cves["results"],
                                                LAST_MODIFIED_CVE,
-                                               Time_Type.PUBLISHED)
+                                               Time_Type.LAST_MODIFIED)
     LAST_MODIFIED_CVE = new_last_time
 
     return filtered_cves
@@ -219,10 +219,15 @@ def generate_new_cve_message(cve_data: dict) -> Embed:
         cve_data["summary"][:500] + "...",
         timestamp=datetime.datetime.utcnow(),
         color=Color.blue())
-    #if cve_data["cvss"] == "None":
-    embed.add_field(name=f"🔮  *CVSS*",
-                    value=f"{cve_data['cvss']}",
-                    inline=True)
+    if not cve_data["cvss"] == "None":
+        embed.add_field(name=f"🔮  *CVSS*",
+                        value=f"{cve_data['cvss']}",
+                        inline=True)
+
+    if not cve_data["cvss-vector"] == "None":
+        embed.add_field(name=f"🔮  *CVSS Vector*",
+                        value=f"{cve_data['cvss-vector']}",
+                        inline=True)
     #else:
     #embed.add_field(name = f"🔮  *CVSS*", value = f"{cve_data['cvss']}/{cve_data['cvss-vector']}", inline = True)
     embed.add_field(name=f"📅  *Published*",
@@ -247,10 +252,22 @@ def generate_modified_cve_message(cve_data: dict) -> Embed:
         f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
         timestamp=datetime.datetime.utcnow(),
         color=Color.gold())
+
     embed.add_field(name=f"🗣 *Summary*",
                     value=cve_data["summary"] if len(cve_data["summary"]) < 500
                     else cve_data["summary"][:500] + "...",
                     inline=False)
+
+    if not cve_data["cvss"] == "None":
+        embed.add_field(name=f"🔮  *CVSS*",
+                        value=f"{cve_data['cvss']}",
+                        inline=True)
+
+    if not cve_data["cvss-vector"] == "None":
+        embed.add_field(name=f"🔮  *CVSS Vector*",
+                        value=f"{cve_data['cvss-vector']}",
+                        inline=True)
+
     embed.set_footer(
         text=f"(First published on {cve_data['Published'].split('T')[0]})\n")
 
