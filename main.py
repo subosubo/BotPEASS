@@ -7,7 +7,7 @@ import yaml
 import vulners
 from os.path import join
 from enum import Enum
-from discord import Webhook, Embed, Color
+from discord import Webhook, RateLimited, Embed, Color
 import aiohttp, asyncio
 from keep_alive import keep_alive
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -380,8 +380,11 @@ async def send_discord_message(message: Embed, public_expls_msg: str):
 
 async def sendtoWebhook(WebHookURL: str, content: Embed):
     async with aiohttp.ClientSession() as session:
-        webhook = Webhook.from_url(WebHookURL, session=session)
-        await webhook.send(embed=content)
+        try:
+            webhook = Webhook.from_url(WebHookURL, session=session)
+            await webhook.send(embed=content)
+        except RateLimited(float(600)):
+            await webhook.send(embed=content)
 
 
 #################### CHECKING for CVE #########################
