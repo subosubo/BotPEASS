@@ -219,12 +219,13 @@ def generate_new_cve_message(cve_data: dict) -> Embed:
         cve_data["summary"][:500] + "...",
         timestamp=datetime.datetime.utcnow(),
         color=Color.blue())
+
     if not cve_data["cvss"] == "None":
         embed.add_field(name=f"🔮  *CVSS*",
                         value=f"{cve_data['cvss']}",
                         inline=True)
 
-    if not cve_data["cvss-vector"] == "None":
+    if cve_data.has_key("cvss-vector"):
         embed.add_field(name=f"🔮  *CVSS Vector*",
                         value=f"{cve_data['cvss-vector']}",
                         inline=True)
@@ -263,7 +264,7 @@ def generate_modified_cve_message(cve_data: dict) -> Embed:
                         value=f"{cve_data['cvss']}",
                         inline=True)
 
-    if not cve_data["cvss-vector"] == "None":
+    if cve_data.has_key("cvss-vector"):
         embed.add_field(name=f"🔮  *CVSS Vector*",
                         value=f"{cve_data['cvss-vector']}",
                         inline=True)
@@ -431,7 +432,6 @@ async def itscheckintime():
 
 #################### MAIN #########################
 if __name__ == "__main__":
-    keep_alive()
     scheduler = AsyncIOScheduler()
     scheduler.add_job(itscheckintime, 'interval', minutes=5)
     scheduler.start()
@@ -439,6 +439,7 @@ if __name__ == "__main__":
 
     # Execution will block here until Ctrl+C (Ctrl+Break on Windows) is pressed.
     try:
+        keep_alive()
         asyncio.get_event_loop().run_forever()
     except (KeyboardInterrupt, SystemExit):
         pass
