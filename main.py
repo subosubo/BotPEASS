@@ -225,10 +225,11 @@ def generate_new_cve_message(cve_data: dict) -> Embed:
                         value=f"{cve_data['cvss']}",
                         inline=True)
 
-    if cve_data.has_key("cvss-vector"):
-        embed.add_field(name=f"🔮  *CVSS Vector*",
-                        value=f"{cve_data['cvss-vector']}",
-                        inline=True)
+    #if not cve_data.get("cvss-vector") == "None":  #if cvss-vector key exists
+    #    embed.add_field(name=f"🔮  *CVSS Vector*",
+    #                    value=f"{cve_data['cvss-vector']}",
+    #                    inline=True)
+
     #else:
     #embed.add_field(name = f"🔮  *CVSS*", value = f"{cve_data['cvss']}/{cve_data['cvss-vector']}", inline = True)
     embed.add_field(name=f"📅  *Published*",
