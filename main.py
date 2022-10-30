@@ -115,8 +115,8 @@ def get_cves(tt_filter: Time_Type) -> dict:
     #limit	Limit the amount of vulnerabilities to return
 
     headers = {
-        #"time_modifier": "from",
-        #"time_start": now_str,
+        "time_modifier": "from",
+        "time_start": now_str,
         "time_type": tt_filter.value,
         "limit": "100",
     }
@@ -162,6 +162,8 @@ def filter_cves(cves: list, last_time: datetime.datetime,
     for cve in cves:
         cve_time = datetime.datetime.strptime(cve[tt_filter.value],
                                               TIME_FORMAT)
+        #last_time is from config
+        #cve time is api data
         if cve_time > last_time:
             if ALL_VALID or is_summ_keyword_present(cve["summary"]) or \
                 is_prod_keyword_present(str(cve["vulnerable_configuration"])):
@@ -260,15 +262,17 @@ def generate_modified_cve_message(cve_data: dict) -> Embed:
                     else cve_data["summary"][:500] + "...",
                     inline=False)
 
-    if not cve_data["cvss"] == "None":
-        embed.add_field(name=f"🔮  *CVSS*",
-                        value=f"{cve_data['cvss']}",
-                        inline=True)
+    #if key exists and there is a value
+    if not cve_data.get("cvss-vector") == "None":
+        if not cve_data["cvss-vector"] == "None":
+            embed.add_field(name=f"🔮  *CVSS*",
+                            value=f"{cve_data['cvss-vector']}",
+                            inline=True)
 
-    if cve_data.has_key("cvss-vector"):
-        embed.add_field(name=f"🔮  *CVSS Vector*",
-                        value=f"{cve_data['cvss-vector']}",
-                        inline=True)
+    #if cve_data.has_key("cvss-vector"):
+    #    embed.add_field(name=f"🔮  *CVSS Vector*",
+    #                    value=f"{cve_data['cvss-vector']}",
+    #                    inline=True)
 
     embed.set_footer(
         text=f"(First published on {cve_data['Published'].split('T')[0]})\n")

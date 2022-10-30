@@ -21,3 +21,4 @@ All credits goes to carlospolop
 9. schedule = "^1.1.0"
 10. APScheduler = "^3.9.1"
 11. nest-asyncio = "^1.5.5"
+

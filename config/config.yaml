@@ -42,6 +42,7 @@ DESCRIPTION_KEYWORDS_I:
 - Variable Overloading
 - Puzzling
 - resource manipulation
+- race condition
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
@@ -53,10 +54,12 @@ PRODUCT_KEYWORDS_I:
 - apple
 - azure
 - Asus
+- apache
 - container
 - docker
 - Git
 - Github
+- java
 - kubernetes
 - lxc
 - Linksys
