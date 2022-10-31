@@ -380,10 +380,11 @@ async def send_discord_message(message: Embed, public_expls_msg: str):
 
 async def sendtoWebhook(WebHookURL: str, content: Embed):
     async with aiohttp.ClientSession() as session:
+
         try:
             webhook = Webhook.from_url(WebHookURL, session=session)
             await webhook.send(embed=content)
-        except RateLimited(float(600)):
+        except RateLimited(600):
             await webhook.send(embed=content)
 
 
