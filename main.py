@@ -146,7 +146,7 @@ def get_modified_cves() -> list:
     cves = get_cves(Time_Type.LAST_MODIFIED)
     filtered_cves, new_last_time = filter_cves(cves["results"],
                                                LAST_MODIFIED_CVE,
-                                               Time_Type.LAST_MODIFIED)
+                                               Time_Type.PUBLISHED)
     LAST_MODIFIED_CVE = new_last_time
 
     return filtered_cves
@@ -263,10 +263,16 @@ def generate_modified_cve_message(cve_data: dict) -> Embed:
                     inline=False)
 
     #if key exists and there is a value
-    if not cve_data.get("cvss-vector") == "None":
+    if "cvss-vector" in cve_data:
         if not cve_data["cvss-vector"] == "None":
             embed.add_field(name=f"🔮  *CVSS*",
                             value=f"{cve_data['cvss-vector']}",
+                            inline=True)
+
+    if "cwe" in cve_data:
+        if not cve_data["cwe"] == "None":
+            embed.add_field(name=f"✏️  *CWE*",
+                            value=f"{cve_data['cwe']}",
                             inline=True)
 
     #if cve_data.has_key("cvss-vector"):
@@ -384,8 +390,8 @@ async def sendtoWebhook(WebHookURL: str, content: Embed):
         try:
             webhook = Webhook.from_url(WebHookURL, session=session)
             await webhook.send(embed=content)
-        except RateLimited(600):
-            await webhook.send(embed=content)
+        except RateLimited(5):
+            os.system("kill 1")
 
 
 #################### CHECKING for CVE #########################
