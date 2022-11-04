@@ -80,9 +80,12 @@ async def sendtowebhook(webhookurl: str, content: Embed):
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
-        except (HTTPException, RateLimited) as e:
+        except (RateLimited) as e:
             content_dict = content.todict()
             print(f"{content_dict}")
+            logger.error(f"{e}")
+            raise
+        except HTTPException as e:
             logger.error(f"{e}")
             raise
             # os.system("kill 1")
