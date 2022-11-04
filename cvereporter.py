@@ -164,8 +164,8 @@ class cvereport:
         vulners_api_key = os.getenv("VULNERS_API_KEY")
 
         if vulners_api_key:
-            vulners_api = vulners.Vulners(api_key=vulners_api_key)
-            cve_data = vulners_api.searchExploit(cve)
+            vulners_api = vulners.VulnersApi(api_key=vulners_api_key)
+            cve_data = vulners_api.find_exploit_all(cve)
             return [v["vhref"] for v in cve_data]
 
         else:
