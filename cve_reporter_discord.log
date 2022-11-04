@@ -1,0 +1,14 @@
+2022-11-04 12:41:41 INFO     Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2022-11-04 12:41:41 DEBUG    Using selector: EpollSelector
+2022-11-04 12:41:41 INFO     Added job "itscheckintime" to job store "default"
+2022-11-04 12:41:41 INFO     Scheduler started
+2022-11-04 12:41:41 DEBUG    Looking for jobs to run
+2022-11-04 12:41:41 DEBUG    Next wakeup is due at 2022-11-04 12:46:41.216163+00:00 (in 299.995809 seconds)
+2022-11-04 12:41:41 INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.18.0.36:8080
+2022-11-04 12:41:41 INFO     [33mPress CTRL+C to quit[0m
+2022-11-04 12:41:41 INFO     172.18.0.1 - - [04/Nov/2022 12:41:41] "[33mOPTIONS * HTTP/1.1[0m" 404 -
+2022-11-04 12:41:44 DEBUG    Using selector: EpollSelector
+2022-11-04 12:41:44 INFO     172.18.0.1 - - [04/Nov/2022 12:41:44] "GET / HTTP/1.1" 200 -

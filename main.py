@@ -15,9 +15,9 @@ from keep_alive import keep_alive
 
 logging.basicConfig(
     handlers=[
-        logging.FileHandler(
-            filename="cve_reporter_discord.log", encoding="utf-8", mode="w"
-        )
+        logging.FileHandler(filename="cve_reporter_discord.log",
+                            encoding="utf-8",
+                            mode="w")
     ],
     format="%(asctime)s %(levelname)-8s %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -29,8 +29,7 @@ def load_keywords():
     # Load keywords from config file
 
     KEYWORDS_CONFIG_PATH = join(
-        pathlib.Path(__file__).parent.absolute(), "config/config.yaml"
-    )
+        pathlib.Path(__file__).parent.absolute(), "config/config.yaml")
     try:
 
         with open(KEYWORDS_CONFIG_PATH, "r") as yaml_file:
@@ -51,7 +50,7 @@ def load_keywords():
             )
 
     except Exception as e:
-        logger.error(e)
+        logging.error(e)
         sys.exit(1)
 
 
@@ -69,8 +68,8 @@ async def send_discord_message(message: Embed, public_expls_msg: str):
 
     if public_expls_msg:
         message = message.add_field(
-            name=f"😈  *Public Exploits* (_limit 10_)  😈", value=public_expls_msg
-        )
+            name=f"😈  *Public Exploits* (_limit 10_)  😈",
+            value=public_expls_msg)
 
     await sendtowebhook(webhookurl=discord_webhok_url, content=message)
 
@@ -81,13 +80,8 @@ async def sendtowebhook(webhookurl: str, content: Embed):
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
-        except (RateLimited):
-            content_dict = content.todict()
-            print(f"{content_dict}")
-            logger.error(f"Ratelimit Error")
-            raise
-        except HTTPException:
-            logger.error(f"HTTPException")
+        except RateLimited(600):
+            logging.error(f"HTTPException")
             raise
             # os.system("kill 1")
 
@@ -127,7 +121,8 @@ async def itscheckintime():
         for new_cve in new_cves:
             public_exploits = cve.search_exploits(new_cve["id"])
             cve_message = cve.generate_new_cve_message(new_cve)
-            public_expls_msg = cve.generate_public_expls_message(public_exploits)
+            public_expls_msg = cve.generate_public_expls_message(
+                public_exploits)
             await send_discord_message(cve_message, public_expls_msg)
 
         # Find and publish modified CVEs
@@ -142,14 +137,15 @@ async def itscheckintime():
         for modified_cve in modified_cves:
             public_exploits = cve.search_exploits(modified_cve["id"])
             cve_message = cve.generate_modified_cve_message(modified_cve)
-            public_expls_msg = cve.generate_public_expls_message(public_exploits)
+            public_expls_msg = cve.generate_public_expls_message(
+                public_exploits)
             await send_discord_message(cve_message, public_expls_msg)
 
         # Update last times
         cve.update_lasttimes()
 
     except Exception as e:
-        logger.error(e)
+        logging.error(e)
         sys.exit(1)
 
 
@@ -165,5 +161,5 @@ if __name__ == "__main__":
         keep_alive()
         asyncio.get_event_loop().run_forever()
     except (KeyboardInterrupt, SystemExit) as e:
-        logger.error(e)
+        logging.error(e)
         raise
