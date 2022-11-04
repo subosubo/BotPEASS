@@ -67,7 +67,9 @@ async def send_discord_message(message: Embed, public_expls_msg: str):
         return
 
     if public_expls_msg:
-        message = message + "\n" + public_expls_msg
+        message = message.add_field(
+            name=f"😈  *Public Exploits* (_limit 20_)  😈", value=public_expls_msg
+        )
 
     await sendtowebhook(webhookurl=discord_webhok_url, content=message)
 

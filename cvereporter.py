@@ -197,7 +197,7 @@ class cvereport:
 
         if cve_data["vulnerable_configuration"]:
             embed.add_field(
-                name=f"\n🔓  *Vulnerable* (_limit to 10_)",
+                name=f"🔓  *Vulnerable* (_limit to 10_)",
                 value=f"{cve_data['vulnerable_configuration'][:10]}",
             )
 
@@ -242,17 +242,13 @@ class cvereport:
 
         return embed
 
-    def generate_public_expls_message(self, public_expls: list) -> Embed:
+    def generate_public_expls_message(self, public_expls: list) -> str:
         # Given the list of public exploits, generate the message
 
-        embed = Embed(
-            title=f"**Public Exploits located**",
-            timestamp=datetime.datetime.utcnow(),
-            color=Color.red(),
-        )
-        embed.add_field(
-            name=f"More Information (_limit to 20_)",
-            value=f"{public_expls[:20]}",
-            inline=False,
-        )
-        return embed
+        message = ""
+        nl = "\n"
+
+        if public_expls:
+            message = f"{nl.join(public_expls[:20])}"
+
+        return message
