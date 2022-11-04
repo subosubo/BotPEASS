@@ -88,17 +88,18 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
-        except RateLimited(600):
+        except HTTPException:
+            # except RateLimited(600):
             if category == "Published":
                 date = content.to_dict()["fields"][f"📅  *Published*"]
                 cve.update_new_cve(date)
-                await webhook.send(embed=content)
+                # await webhook.send(embed=content)
             elif category == "last-modified":
                 date = content.to_dict()["description"]
                 cve.update_new_modified(date)
-                await webhook.send(embed=content)
+                # await webhook.send(embed=content)
             # raise
-            # os.system("kill 1")
+            os.system("kill 1")
 
 
 #################### CHECKING for CVE #########################
