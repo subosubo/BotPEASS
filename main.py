@@ -81,8 +81,8 @@ async def sendtowebhook(webhookurl: str, content: Embed):
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
         except RateLimited(600):
-            logging.error(f"HTTPException")
-            raise
+            
+            #raise
             # os.system("kill 1")
 
 
