@@ -201,7 +201,7 @@ class cvereport:
         if cve_data["vulnerable_configuration"]:
             embed.add_field(
                 name=f"🔓  *Vulnerable* (_limit to 6_)",
-                value=f"{cve_data['vulnerable_configuration'][:6]}",
+                value=f"{nl.join(cve_data['vulnerable_configuration'][:6])}",
                 inline=False,
             )
 
