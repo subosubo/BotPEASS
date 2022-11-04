@@ -10,14 +10,14 @@ import yaml
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from discord import Embed, HTTPException, RateLimited, Webhook
 
-from cvereporter import cvereport
+from cvereporter import cvereport, time_type
 from keep_alive import keep_alive
 
 logging.basicConfig(
     handlers=[
-        logging.FileHandler(filename="cve_reporter_discord.log",
-                            encoding="utf-8",
-                            mode="w")
+        logging.FileHandler(
+            filename="cve_reporter_discord.log", encoding="utf-8", mode="w"
+        )
     ],
     format="%(asctime)s %(levelname)-8s %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -29,7 +29,8 @@ def load_keywords():
     # Load keywords from config file
 
     KEYWORDS_CONFIG_PATH = join(
-        pathlib.Path(__file__).parent.absolute(), "config/config.yaml")
+        pathlib.Path(__file__).parent.absolute(), "config/config.yaml"
+    )
     try:
 
         with open(KEYWORDS_CONFIG_PATH, "r") as yaml_file:
@@ -57,7 +58,9 @@ def load_keywords():
 #################### SEND MESSAGES #########################
 
 
-async def send_discord_message(message: Embed, public_expls_msg: str):
+async def send_discord_message(
+    message: Embed, public_expls_msg: str, tt_filter: time_type, cve: cvereport
+):
     # Send a message to the discord channel webhook
 
     discord_webhok_url = os.getenv("DISCORD_WEBHOOK_URL")
@@ -68,21 +71,33 @@ async def send_discord_message(message: Embed, public_expls_msg: str):
 
     if public_expls_msg:
         message = message.add_field(
-            name=f"😈  *Public Exploits* (_limit 10_)  😈",
-            value=public_expls_msg)
+            name=f"😈  *Public Exploits* (_limit 10_)  😈", value=public_expls_msg
+        )
 
-    await sendtowebhook(webhookurl=discord_webhok_url, content=message)
+    await sendtowebhook(
+        webhookurl=discord_webhok_url,
+        content=message,
+        category=tt_filter.value,
+        cve=cve,
+    )
 
 
-async def sendtowebhook(webhookurl: str, content: Embed):
+async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cvereport):
     async with aiohttp.ClientSession() as session:
 
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
         except RateLimited(600):
-            
-            #raise
+            if category == "Published":
+                date = content.to_dict()["fields"][f"📅  *Published*"]
+                cve.update_new_cve(date)
+                await webhook.send(embed=content)
+            elif category == "last-modified":
+                date = content.to_dict()["description"]
+                cve.update_new_modified(date)
+                await webhook.send(embed=content)
+            # raise
             # os.system("kill 1")
 
 
@@ -121,9 +136,10 @@ async def itscheckintime():
         for new_cve in new_cves:
             public_exploits = cve.search_exploits(new_cve["id"])
             cve_message = cve.generate_new_cve_message(new_cve)
-            public_expls_msg = cve.generate_public_expls_message(
-                public_exploits)
-            await send_discord_message(cve_message, public_expls_msg)
+            public_expls_msg = cve.generate_public_expls_message(public_exploits)
+            await send_discord_message(
+                cve_message, public_expls_msg, time_type.PUBLISHED, cve
+            )
 
         # Find and publish modified CVEs
         modified_cves = cve.get_modified_cves()
@@ -137,9 +153,10 @@ async def itscheckintime():
         for modified_cve in modified_cves:
             public_exploits = cve.search_exploits(modified_cve["id"])
             cve_message = cve.generate_modified_cve_message(modified_cve)
-            public_expls_msg = cve.generate_public_expls_message(
-                public_exploits)
-            await send_discord_message(cve_message, public_expls_msg)
+            public_expls_msg = cve.generate_public_expls_message(public_exploits)
+            await send_discord_message(
+                cve_message, public_expls_msg, time_type.LAST_MODIFIED, cve
+            )
 
         # Update last times
         cve.update_lasttimes()

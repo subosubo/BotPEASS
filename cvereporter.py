@@ -39,18 +39,46 @@ class cvereport:
         try:
             with open(self.CVES_JSON_PATH, "r") as json_file:
                 cves_time = json.load(json_file)
-                LAST_NEW_CVE = datetime.datetime.strptime(
+                self.LAST_NEW_CVE = datetime.datetime.strptime(
                     cves_time["LAST_NEW_CVE"], self.TIME_FORMAT
                 )
-                LAST_MODIFIED_CVE = datetime.datetime.strptime(
+                self.LAST_MODIFIED_CVE = datetime.datetime.strptime(
                     cves_time["LAST_MODIFIED_CVE"], self.TIME_FORMAT
                 )
 
         except Exception as e:  # If error, just keep the fault date (today - 1 day)
             print(f"ERROR, using default last times.\n{e}")
 
-        print(f"Last new cve: {LAST_NEW_CVE}")
-        print(f"Last modified cve: {LAST_MODIFIED_CVE}")
+        print(f"Last new cve: {self.LAST_NEW_CVE}")
+        print(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
+
+    def update_new_cve(self, published_date):
+        try:
+            with open(self.CVES_JSON_PATH, "w") as json_file:
+                json.dump(
+                    {
+                        "LAST_NEW_CVE": published_date,
+                        "LAST_MODIFIED_CVE": self.LAST_MODIFIED_CVE.strftime(
+                            self.TIME_FORMAT
+                        ),
+                    },
+                    json_file,
+                )
+        except Exception as e:
+            print(f"ERROR: {e}")
+
+    def update_new_modified(self, modified_date):
+        try:
+            with open(self.CVES_JSON_PATH, "w") as json_file:
+                json.dump(
+                    {
+                        "LAST_NEW_CVE": self.LAST_NEW_CVE.strftime(self.TIME_FORMAT),
+                        "LAST_MODIFIED_CVE": modified_date,
+                    },
+                    json_file,
+                )
+        except Exception as e:
+            print(f"ERROR: {e}")
 
     def update_lasttimes(self):
         # Save lasttimes in json file
@@ -218,7 +246,8 @@ class cvereport:
 
         embed = Embed(
             title=f"📣 *{cve_data['id']} Modified*",
-            description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
+            #description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
+            description=f"{cve_data['last-modified']}"
             timestamp=datetime.datetime.utcnow(),
             color=Color.gold(),
         )
