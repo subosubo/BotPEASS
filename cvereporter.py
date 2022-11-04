@@ -153,8 +153,8 @@ class cvereport:
     def is_prod_keyword_present(self, products: str):
         # Given the summary check if any keyword is present
 
-        return any(w in products for w in self.PRODUCT_KEYWORDS) or any(
-            w.lower() in products.lower() for w in self.PRODUCT_KEYWORDS_I
+        return any(w in products for w in self.product) or any(
+            w.lower() in products.lower() for w in self.product_i
         )
 
     def search_exploits(self, cve: str) -> list:
