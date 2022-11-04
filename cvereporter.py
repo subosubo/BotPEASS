@@ -146,8 +146,8 @@ class cvereport:
     def is_summ_keyword_present(self, summary: str):
         # Given the summary check if any keyword is present
 
-        return any(w in summary for w in self.DESCRIPTION_KEYWORDS) or any(
-            w.lower() in summary.lower() for w in self.DESCRIPTION_KEYWORDS_I
+        return any(w in summary for w in self.keywords) or any(
+            w.lower() in summary.lower() for w in self.keywords_i
         )  # for each of the word in description keyword config, check if it exists in summary.
 
     def is_prod_keyword_present(self, products: str):
