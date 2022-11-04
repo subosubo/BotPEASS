@@ -182,8 +182,8 @@ class cvereport:
         embed = Embed(
             title=f"🚨  *{cve_data['id']}*  🚨",
             description=cve_data["summary"]
-            if len(cve_data["summary"]) < 500
-            else cve_data["summary"][:500] + "...",
+            if len(cve_data["summary"]) < 400
+            else cve_data["summary"][:400] + "...",
             timestamp=datetime.datetime.utcnow(),
             color=Color.blue(),
         )
@@ -197,13 +197,13 @@ class cvereport:
 
         if cve_data["vulnerable_configuration"]:
             embed.add_field(
-                name=f"🔓  *Vulnerable* (_limit to 10_)",
-                value=f"{cve_data['vulnerable_configuration'][:10]}",
+                name=f"🔓  *Vulnerable* (_limit to 6_)",
+                value=f"{cve_data['vulnerable_configuration'][:6]}",
             )
 
         embed.add_field(
-            name=f"More Information (_limit to 5_)",
-            value=f"{nl.join(cve_data['references'][:5])}",
+            name=f"More Information (_limit to 4_)",
+            value=f"{nl.join(cve_data['references'][:4])}",
             inline=False,
         )
 
@@ -222,8 +222,8 @@ class cvereport:
         embed.add_field(
             name=f"🗣 *Summary*",
             value=cve_data["summary"]
-            if len(cve_data["summary"]) < 500
-            else cve_data["summary"][:500] + "...",
+            if len(cve_data["summary"]) < 400
+            else cve_data["summary"][:400] + "...",
             inline=False,
         )
 
@@ -249,6 +249,6 @@ class cvereport:
         nl = "\n"
 
         if public_expls:
-            message = f"{nl.join(public_expls[:20])}"
+            message = f"{nl.join(public_expls[:10])}"
 
         return message
