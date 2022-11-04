@@ -13,7 +13,6 @@ from discord import Embed, HTTPException, RateLimited, Webhook
 from cvereporter import cvereport
 from keep_alive import keep_alive
 
-logger = logging.getLogger("cvereporter")
 logging.basicConfig(
     handlers=[
         logging.FileHandler(
