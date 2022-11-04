@@ -16,7 +16,7 @@ from keep_alive import keep_alive
 logger = logging.getLogger("cvereporter")
 logger.setLevel(logging.ERROR)
 handler = logging.FileHandler(
-    filename="cve_reporter_discord.log", encoding="utf-8", mode="w "
+    filename="cve_reporter_discord.log", encoding="utf-8", mode="w"
 )
 handler.setFormatter(
     logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
