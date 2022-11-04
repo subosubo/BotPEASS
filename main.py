@@ -14,14 +14,16 @@ from cvereporter import cvereport
 from keep_alive import keep_alive
 
 logger = logging.getLogger("cvereporter")
-logger.setLevel(logging.ERROR)
-handler = logging.FileHandler(
-    filename="cve_reporter_discord.log", encoding="utf-8", mode="w"
+logging.basicConfig(
+    handlers=[
+        logging.FileHandler(
+            filename="cve_reporter_discord.log", encoding="utf-8", mode="w"
+        )
+    ],
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.DEBUG,
 )
-handler.setFormatter(
-    logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
-)
-logger.addHandler(handler)
 
 
 def load_keywords():
@@ -80,13 +82,13 @@ async def sendtowebhook(webhookurl: str, content: Embed):
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
-        except (RateLimited) as e:
+        except (RateLimited):
             content_dict = content.todict()
             print(f"{content_dict}")
-            logger.error(f"{e}")
+            logger.error(f"Ratelimit Error")
             raise
-        except HTTPException as e:
-            logger.error(f"{e}")
+        except HTTPException:
+            logger.error(f"HTTPException")
             raise
             # os.system("kill 1")
 
