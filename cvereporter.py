@@ -161,17 +161,20 @@ class cvereport:
         # Given a CVE it will search for public exploits to abuse it
         # use bot commands to find exploits for particular CVE
 
-        vulners_api_key = os.getenv("VULNERS_API_KEY")
-
-        if vulners_api_key:
-            vulners_api = vulners.VulnersApi(api_key=vulners_api_key)
-            cve_data = vulners_api.find_exploit_all(cve)
-            return [v["vhref"] for v in cve_data]
-
-        else:
-            print("VULNERS_API_KEY wasn't configured in the secrets!")
-
+        # return blank because basic vulner user has limited search hence removing exploit search function, but source code works
         return []
+
+        # vulners_api_key = os.getenv("VULNERS_API_KEY")
+
+        # if vulners_api_key:
+        #     vulners_api = vulners.VulnersApi(api_key=vulners_api_key)
+        #     cve_data = vulners_api.find_exploit_all(cve)
+        #     return [v["vhref"] for v in cve_data]
+
+        # else:
+        #     print("VULNERS_API_KEY wasn't configured in the secrets!")
+
+        # return []
 
     #################### GENERATE MESSAGES #########################
 
