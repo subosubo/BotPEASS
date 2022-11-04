@@ -16,7 +16,7 @@ from keep_alive import keep_alive
 logger = logging.getLogger("cvereporter")
 logger.setLevel(logging.ERROR)
 handler = logging.FileHandler(
-    filename="cve_reporter_discord.log", encoding="utf-8", mode="w"
+    filename="cve_reporter_discord.log", encoding="utf-8", mode="w "
 )
 handler.setFormatter(
     logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
@@ -25,7 +25,7 @@ logger.addHandler(handler)
 
 
 def load_keywords():
-    """Load keywords from config file"""
+    # Load keywords from config file
 
     KEYWORDS_CONFIG_PATH = join(
         pathlib.Path(__file__).parent.absolute(), "config/config.yaml"
@@ -58,13 +58,16 @@ def load_keywords():
 
 
 async def send_discord_message(message: Embed, public_expls_msg: str):
-    """Send a message to the discord channel webhook"""
+    # Send a message to the discord channel webhook
 
     discord_webhok_url = os.getenv("DISCORD_WEBHOOK_URL")
 
     if not discord_webhok_url:
         print("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
         return
+
+    if public_expls_msg:
+        message = message + "\n" + public_expls_msg
 
     await sendtowebhook(webhookurl=discord_webhok_url, content=message)
 
@@ -75,12 +78,12 @@ async def sendtowebhook(webhookurl: str, content: Embed):
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
-        except HTTPException:
-            # dict=content.todict()
-
-            os.system("kill 1")
-        except RateLimited:
-            os.system("kill 1")
+        except (HTTPException, RateLimited) as e:
+            content_dict = content.todict()
+            print(f"{content_dict}")
+            logger.error(f"{e}")
+            raise
+            # os.system("kill 1")
 
 
 #################### CHECKING for CVE #########################
@@ -155,5 +158,6 @@ if __name__ == "__main__":
     try:
         keep_alive()
         asyncio.get_event_loop().run_forever()
-    except (KeyboardInterrupt, SystemExit):
-        pass
+    except (KeyboardInterrupt, SystemExit) as e:
+        logger.error(e)
+        raise

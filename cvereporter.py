@@ -1,21 +1,13 @@
-import asyncio
 import datetime
 import json
-import logging
 import os
 import pathlib
-import sys
 from enum import Enum
 from os.path import join
 
-import aiohttp
 import requests
 import vulners
-import yaml
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from discord import Color, Embed, HTTPException, RateLimited, Webhook
-
-from keep_alive import keep_alive
+from discord import Color, Embed
 
 
 class time_type(Enum):
@@ -61,7 +53,7 @@ class cvereport:
         print(f"Last modified cve: {LAST_MODIFIED_CVE}")
 
     def update_lasttimes(self):
-        """Save lasttimes in json file"""
+        # Save lasttimes in json file
         try:
             with open(self.CVES_JSON_PATH, "w") as json_file:
                 json.dump(
@@ -79,7 +71,7 @@ class cvereport:
     ################## SEARCH CVES ####################
 
     def get_cves(self, tt_filter: time_type) -> dict:
-        """Given the headers for the API retrive CVEs from cve.circl.lu"""
+        # Given the headers for the API retrive CVEs from cve.circl.lu
         now = datetime.datetime.now() - datetime.timedelta(days=1)
         now_str = now.strftime("%d-%m-%Y")
         # https://cve.circl.lu/api/
@@ -99,35 +91,31 @@ class cvereport:
         return r.json()
 
     def get_new_cves(self) -> list:
-        """Get CVEs that are new"""
-
-        global LAST_NEW_CVE
+        # Get CVEs that are new#
 
         cves = self.get_cves(time_type.PUBLISHED)
         filtered_cves, new_last_time = self.filter_cves(
-            cves["results"], LAST_NEW_CVE, time_type.PUBLISHED
+            cves["results"], self.LAST_NEW_CVE, time_type.PUBLISHED
         )
-        LAST_NEW_CVE = new_last_time
+        self.LAST_NEW_CVE = new_last_time
 
         return filtered_cves
 
     def get_modified_cves(self) -> list:
-        """Get CVEs that has been modified"""
-
-        global LAST_MODIFIED_CVE
+        # Get CVEs that has been modified
 
         cves = self.get_cves(time_type.LAST_MODIFIED)
         filtered_cves, new_last_time = self.filter_cves(
-            cves["results"], LAST_MODIFIED_CVE, time_type.LAST_MODIFIED
+            cves["results"], self.LAST_MODIFIED_CVE, time_type.LAST_MODIFIED
         )
-        LAST_MODIFIED_CVE = new_last_time
+        self.LAST_MODIFIED_CVE = new_last_time
 
         return filtered_cves
 
     def filter_cves(
         self, cves: list, last_time: datetime.datetime, tt_filter: time_type
     ):
-        """Filter by time the given list of CVEs"""
+        # Filter by time the given list of CVEs
 
         filtered_cves = []
         new_last_time = last_time
@@ -156,23 +144,22 @@ class cvereport:
         return filtered_cves, new_last_time
 
     def is_summ_keyword_present(self, summary: str):
-        """Given the summary check if any keyword is present"""
+        # Given the summary check if any keyword is present
 
         return any(w in summary for w in self.DESCRIPTION_KEYWORDS) or any(
             w.lower() in summary.lower() for w in self.DESCRIPTION_KEYWORDS_I
         )  # for each of the word in description keyword config, check if it exists in summary.
 
     def is_prod_keyword_present(self, products: str):
-        """Given the summary check if any keyword is present"""
+        # Given the summary check if any keyword is present
 
         return any(w in products for w in self.PRODUCT_KEYWORDS) or any(
             w.lower() in products.lower() for w in self.PRODUCT_KEYWORDS_I
         )
 
     def search_exploits(self, cve: str) -> list:
-        """Given a CVE it will search for public exploits to abuse it"""
+        # Given a CVE it will search for public exploits to abuse it
         # use bot commands to find exploits for particular CVE
-        return []
 
         vulners_api_key = os.getenv("VULNERS_API_KEY")
 
@@ -189,7 +176,7 @@ class cvereport:
     #################### GENERATE MESSAGES #########################
 
     def generate_new_cve_message(self, cve_data: dict) -> Embed:
-        """Generate new CVE message for sending to slack"""
+        # Generate new CVE message for sending to slack
 
         nl = "\n"
         embed = Embed(
@@ -223,7 +210,7 @@ class cvereport:
         return embed
 
     def generate_modified_cve_message(self, cve_data: dict) -> Embed:
-        """Generate modified CVE message for sending to slack"""
+        # Generate modified CVE message for sending to slack
 
         embed = Embed(
             title=f"📣 *{cve_data['id']} Modified*",
@@ -256,7 +243,7 @@ class cvereport:
         return embed
 
     def generate_public_expls_message(self, public_expls: list) -> Embed:
-        """Given the list of public exploits, generate the message"""
+        # Given the list of public exploits, generate the message
 
         embed = Embed(
             title=f"**Public Exploits located**",
