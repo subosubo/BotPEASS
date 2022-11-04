@@ -246,8 +246,8 @@ class cvereport:
 
         embed = Embed(
             title=f"📣 *{cve_data['id']} Modified*",
-            #description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
-            description=f"{cve_data['last-modified']}"
+            # description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
+            description=f"{cve_data['last-modified']}",
             timestamp=datetime.datetime.utcnow(),
             color=Color.gold(),
         )
