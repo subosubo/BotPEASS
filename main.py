@@ -7,7 +7,7 @@ import yaml
 import vulners
 from os.path import join
 from enum import Enum
-from discord import Webhook, RateLimited, Embed, Color
+from discord import Webhook, RateLimited, Embed, Color, HTTPException
 import aiohttp, asyncio
 from keep_alive import keep_alive
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -390,7 +390,9 @@ async def sendtoWebhook(WebHookURL: str, content: Embed):
         try:
             webhook = Webhook.from_url(WebHookURL, session=session)
             await webhook.send(embed=content)
-        except RateLimited(5):
+        except HTTPException:
+            os.system("kill 1")
+        except RateLimited:
             os.system("kill 1")
 
 
