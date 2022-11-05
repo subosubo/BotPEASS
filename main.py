@@ -15,9 +15,8 @@ from keep_alive import keep_alive
 log = logging.getLogger("cve-reporter")
 log.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter(
-    "%(asctime)s %(levelname)-8s %(message)s", "%Y-%m-%d %H:%M:%S"
-)
+formatter = logging.Formatter("%(asctime)s %(levelname)-8s %(message)s",
+                              "%Y-%m-%d %H:%M:%S")
 
 # Log to file
 filehandler = logging.FileHandler("cve_reporter_discord.log", "w", "utf-8")
@@ -33,40 +32,39 @@ log.addHandler(streamhandler)
 
 
 #################### SEND MESSAGES #########################
-
-
-async def send_discord_message(
-    message: Embed, public_expls_msg: str, tt_filter: time_type, cve: cvereport
-):
+async def send_discord_message(message: Embed, public_expls_msg: str,
+                               tt_filter: time_type, cve: cvereport):
     # Send a message to the discord channel webhook
 
-    discord_webhok_url = os.getenv("DISCORD_WEBHOOK_URL")
+    discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
-    if not discord_webhok_url:
+    if not discord_webhook_url:
         print("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
         return
 
     if public_expls_msg:
         message = message.add_field(
-            name=f"😈  *Public Exploits* (_limit 10_)  😈", value=public_expls_msg
-        )
+            name=f"😈  *Public Exploits* (_limit 10_)  😈",
+            value=public_expls_msg)
 
     await sendtowebhook(
-        webhookurl=discord_webhok_url,
+        webhookurl=discord_webhook_url,
         content=message,
         category=tt_filter.value,
         cve=cve,
     )
 
 
-async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cvereport):
+async def sendtowebhook(webhookurl: str, content: Embed, category: str,
+                        cve: cvereport):
     async with aiohttp.ClientSession() as session:
 
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
+            
         except HTTPException:
-            model = content.to_dict()["fields"]
+            model = content.to_dict()["fields"][2]["value"]
             logging.info(f"{model}")
             print(f"{model}")
             # except RateLimited(600):
@@ -108,10 +106,10 @@ async def itscheckintime():
         for new_cve in cve.new_cves:
             public_exploits = cve.search_exploits(new_cve["id"])
             cve_message = cve.generate_new_cve_message(new_cve)
-            public_expls_msg = cve.generate_public_expls_message(public_exploits)
-            await send_discord_message(
-                cve_message, public_expls_msg, time_type.PUBLISHED, cve
-            )
+            public_expls_msg = cve.generate_public_expls_message(
+                public_exploits)
+            await send_discord_message(cve_message, public_expls_msg,
+                                       time_type.PUBLISHED, cve)
 
         # Find and publish modified CVEs
         cve.get_modified_cves()
@@ -125,10 +123,10 @@ async def itscheckintime():
         for modified_cve in modified_cves:
             public_exploits = cve.search_exploits(modified_cve["id"])
             cve_message = cve.generate_modified_cve_message(modified_cve)
-            public_expls_msg = cve.generate_public_expls_message(public_exploits)
-            await send_discord_message(
-                cve_message, public_expls_msg, time_type.LAST_MODIFIED, cve
-            )
+            public_expls_msg = cve.generate_public_expls_message(
+                public_exploits)
+            await send_discord_message(cve_message, public_expls_msg,
+                                       time_type.LAST_MODIFIED, cve)
 
         # Update last times
         cve.update_lasttimes()

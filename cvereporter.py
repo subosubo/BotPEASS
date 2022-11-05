@@ -17,14 +17,16 @@ class time_type(Enum):
 
 
 class cvereport:
+
     def __init__(self):
 
         self.CIRCL_LU_URL = "https://cve.circl.lu/api/query"
         self.CVES_JSON_PATH = join(
-            pathlib.Path(__file__).parent.absolute(), "output/record.json"
-        )
-        self.LAST_NEW_CVE = datetime.datetime.now() - datetime.timedelta(days=1)
-        self.LAST_MODIFIED_CVE = datetime.datetime.now() - datetime.timedelta(days=1)
+            pathlib.Path(__file__).parent.absolute(), "output/record.json")
+        self.LAST_NEW_CVE = datetime.datetime.now() - datetime.timedelta(
+            days=1)
+        self.LAST_MODIFIED_CVE = datetime.datetime.now() - datetime.timedelta(
+            days=1)
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
         self.logger = logging.getLogger("cve-reporter")
 
@@ -34,8 +36,7 @@ class cvereport:
         # Load keywords from config file
 
         self.KEYWORDS_CONFIG_PATH = join(
-            pathlib.Path(__file__).parent.absolute(), "config/config.yaml"
-        )
+            pathlib.Path(__file__).parent.absolute(), "config/config.yaml")
         try:
 
             with open(self.KEYWORDS_CONFIG_PATH, "r") as yaml_file:
@@ -60,11 +61,9 @@ class cvereport:
             with open(self.CVES_JSON_PATH, "r") as json_file:
                 cves_time = json.load(json_file)
                 self.LAST_NEW_CVE = datetime.datetime.strptime(
-                    cves_time["LAST_NEW_CVE"], self.TIME_FORMAT
-                )
+                    cves_time["LAST_NEW_CVE"], self.TIME_FORMAT)
                 self.LAST_MODIFIED_CVE = datetime.datetime.strptime(
-                    cves_time["LAST_MODIFIED_CVE"], self.TIME_FORMAT
-                )
+                    cves_time["LAST_MODIFIED_CVE"], self.TIME_FORMAT)
 
         except Exception as e:  # If error, just keep the fault date (today - 1 day)
             logging.error(f"ERROR, using default last times.\n{e}")
@@ -77,10 +76,10 @@ class cvereport:
             with open(self.CVES_JSON_PATH, "w") as json_file:
                 json.dump(
                     {
-                        "LAST_NEW_CVE": published_date,
-                        "LAST_MODIFIED_CVE": self.LAST_MODIFIED_CVE.strftime(
-                            self.TIME_FORMAT
-                        ),
+                        "LAST_NEW_CVE":
+                        published_date,
+                        "LAST_MODIFIED_CVE":
+                        self.LAST_MODIFIED_CVE.strftime(self.TIME_FORMAT),
                     },
                     json_file,
                 )
@@ -92,8 +91,10 @@ class cvereport:
             with open(self.CVES_JSON_PATH, "w") as json_file:
                 json.dump(
                     {
-                        "LAST_NEW_CVE": self.LAST_NEW_CVE.strftime(self.TIME_FORMAT),
-                        "LAST_MODIFIED_CVE": modified_date,
+                        "LAST_NEW_CVE":
+                        self.LAST_NEW_CVE.strftime(self.TIME_FORMAT),
+                        "LAST_MODIFIED_CVE":
+                        modified_date,
                     },
                     json_file,
                 )
@@ -106,10 +107,10 @@ class cvereport:
             with open(self.CVES_JSON_PATH, "w") as json_file:
                 json.dump(
                     {
-                        "LAST_NEW_CVE": self.LAST_NEW_CVE.strftime(self.TIME_FORMAT),
-                        "LAST_MODIFIED_CVE": self.LAST_MODIFIED_CVE.strftime(
-                            self.TIME_FORMAT
-                        ),
+                        "LAST_NEW_CVE":
+                        self.LAST_NEW_CVE.strftime(self.TIME_FORMAT),
+                        "LAST_MODIFIED_CVE":
+                        self.LAST_MODIFIED_CVE.strftime(self.TIME_FORMAT),
                     },
                     json_file,
                 )
@@ -143,40 +144,32 @@ class cvereport:
 
         cves = self.request_cves(time_type.PUBLISHED)
         self.new_cves, self.LAST_NEW_CVE = self.filter_cves(
-            cves["results"], self.LAST_NEW_CVE, time_type.PUBLISHED
-        )
+            cves["results"], self.LAST_NEW_CVE, time_type.PUBLISHED)
 
     def get_modified_cves(self) -> list:
         # Get CVEs that has been modified
 
         cves = self.request_cves(time_type.LAST_MODIFIED)
         self.mod_cves, self.LAST_MODIFIED_CVE = self.filter_cves(
-            cves["results"], self.LAST_MODIFIED_CVE, time_type.LAST_MODIFIED
-        )
+            cves["results"], self.LAST_MODIFIED_CVE, time_type.LAST_MODIFIED)
 
-    def filter_cves(
-        self, cves: list, last_time: datetime.datetime, tt_filter: time_type
-    ):
+    def filter_cves(self, cves: list, last_time: datetime.datetime,
+                    tt_filter: time_type):
         # Filter by time the given list of CVEs
 
         filtered_cves = []
         new_last_time = last_time
 
         for cve in cves:
-            cve_time = datetime.datetime.strptime(
-                cve[tt_filter.value], self.TIME_FORMAT
-            )
+            cve_time = datetime.datetime.strptime(cve[tt_filter.value],
+                                                  self.TIME_FORMAT)
             # last_time is from config
             # cve time is api data
             # caters to multiple new cves with same published/modified time
             if cve_time > last_time:
-                if (
-                    self.valid
-                    or self.is_summ_keyword_present(cve["summary"])
-                    or self.is_prod_keyword_present(
-                        str(cve["vulnerable_configuration"])
-                    )
-                ):
+                if (self.valid or self.is_summ_keyword_present(cve["summary"])
+                        or self.is_prod_keyword_present(
+                            str(cve["vulnerable_configuration"]))):
 
                     filtered_cves.append(cve)
 
@@ -195,9 +188,9 @@ class cvereport:
     def is_prod_keyword_present(self, products: str):
         # Given the summary check if any keyword is present
 
-        return any(w in products for w in self.product) or any(
-            w.lower() in products.lower() for w in self.product_i
-        )
+        return any(w in products
+                   for w in self.product) or any(w.lower() in products.lower()
+                                                 for w in self.product_i)
 
     def search_exploits(self, cve: str) -> list:
         # Given a CVE it will search for public exploits to abuse it
@@ -226,19 +219,20 @@ class cvereport:
         nl = "\n"
         embed = Embed(
             title=f"🚨  *{cve_data['id']}*  🚨",
-            description=cve_data["summary"]
-            if len(cve_data["summary"]) < 400
+            description=cve_data["summary"] if len(cve_data["summary"]) < 400
             else cve_data["summary"][:400] + "...",
             timestamp=datetime.datetime.utcnow(),
             color=Color.blue(),
         )
 
         if cve_data["cvss"] != "None":
-            embed.add_field(name=f"🔮  *CVSS*", value=f"{cve_data['cvss']}", inline=True)
+            embed.add_field(name=f"🔮  *CVSS*",
+                            value=f"{cve_data['cvss']}",
+                            inline=True)
 
-        embed.add_field(
-            name=f"📅  *Published*", value=f"{cve_data['Published']}", inline=True
-        )
+        embed.add_field(name=f"📅  *Published*",
+                        value=f"{cve_data['Published']}",
+                        inline=True)
 
         if cve_data["vulnerable_configuration"]:
             embed.add_field(
@@ -257,32 +251,30 @@ class cvereport:
 
     def generate_modified_cve_message(self, cve_data: dict) -> Embed:
         # Generate modified CVE message for sending to slack
-
+        # description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
+        descript=""
+        if "cvss-vector" in cve_data and cve_data["cvss-vector"] != "None":
+            descript=f"CVSS: {cve_data[cvss-vector]} "
+        if "cwe" in cve_data and cve_data["cwe"] != "None":
+            descript += f"CWE: {cve_data['cwe']}"
+        
         embed = Embed(
             title=f"📣 *{cve_data['id']} Modified*",
-            # description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
-            description=f"{cve_data['last-modified']}",
+            description=descript,   
             timestamp=datetime.datetime.utcnow(),
             color=Color.gold(),
         )
 
+        embed.add_field(name=f"📅  *Modified*",
+                        value=f"{cve_data['last-modified']}",
+                        inline=True)
+
         embed.add_field(
             name=f"🗣 *Summary*",
-            value=cve_data["summary"]
-            if len(cve_data["summary"]) < 400
-            else cve_data["summary"][:400] + "...",
-            inline=False,
+            value=cve_data["summary"] if len(cve_data["summary"]) < 400 else
+            cve_data["summary"][:400] + "...",
         )
-
-        # if key exists and there is a value
-        if "cvss-vector" in cve_data and cve_data["cvss-vector"] != "None":
-            embed.add_field(
-                name=f"🔮  *CVSS*", value=f"{cve_data['cvss-vector']}", inline=True
-            )
-
-        if "cwe" in cve_data and cve_data["cwe"] != "None":
-            embed.add_field(name=f"✏️  *CWE*", value=f"{cve_data['cwe']}", inline=True)
-
+        
         embed.set_footer(
             text=f"(First published on {cve_data['Published'].split('T')[0]})\n"
         )
