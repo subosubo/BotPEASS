@@ -1,12 +1,13 @@
 import datetime
 import json
-import os
+import logging
 import pathlib
+import sys
 from enum import Enum
 from os.path import join
 
 import requests
-import vulners
+import yaml
 from discord import Color, Embed
 
 
@@ -16,12 +17,7 @@ class time_type(Enum):
 
 
 class cvereport:
-    def __init__(self, valid, keywords, keywords_i, product, product_i):
-        self.valid = valid
-        self.keywords = keywords
-        self.keywords_i = keywords_i
-        self.product = product
-        self.product_i = product_i
+    def __init__(self):
 
         self.CIRCL_LU_URL = "https://cve.circl.lu/api/query"
         self.CVES_JSON_PATH = join(
@@ -30,6 +26,30 @@ class cvereport:
         self.LAST_NEW_CVE = datetime.datetime.now() - datetime.timedelta(days=1)
         self.LAST_MODIFIED_CVE = datetime.datetime.now() - datetime.timedelta(days=1)
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
+        self.logger = logging.getLogger("cve-reporter")
+
+        self.new_cves = []
+        self.mod_cves = []
+
+        # Load keywords from config file
+
+        self.KEYWORDS_CONFIG_PATH = join(
+            pathlib.Path(__file__).parent.absolute(), "config/config.yaml"
+        )
+        try:
+
+            with open(self.KEYWORDS_CONFIG_PATH, "r") as yaml_file:
+                keywords_config = yaml.safe_load(yaml_file)
+                print(f"Loaded keywords: {keywords_config}")
+                self.valid = keywords_config["ALL_VALID"]
+                self.keywords_i = keywords_config["DESCRIPTION_KEYWORDS_I"]
+                self.keywords = keywords_config["DESCRIPTION_KEYWORDS"]
+                self.product_i = keywords_config["PRODUCT_KEYWORDS_I"]
+                self.product = keywords_config["PRODUCT_KEYWORDS"]
+
+        except Exception as e:
+            logging.error(e)
+            sys.exit(1)
 
     ################## LOAD CONFIGURATIONS ####################
 
@@ -47,7 +67,7 @@ class cvereport:
                 )
 
         except Exception as e:  # If error, just keep the fault date (today - 1 day)
-            print(f"ERROR, using default last times.\n{e}")
+            logging.error(f"ERROR, using default last times.\n{e}")
 
         print(f"Last new cve: {self.LAST_NEW_CVE}")
         print(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
@@ -65,7 +85,7 @@ class cvereport:
                     json_file,
                 )
         except Exception as e:
-            print(f"ERROR: {e}")
+            logging.error(f"ERROR: {e}")
 
     def update_new_modified(self, modified_date):
         try:
@@ -78,7 +98,7 @@ class cvereport:
                     json_file,
                 )
         except Exception as e:
-            print(f"ERROR: {e}")
+            logging.error(f"ERROR: {e}")
 
     def update_lasttimes(self):
         # Save lasttimes in json file
@@ -94,11 +114,11 @@ class cvereport:
                     json_file,
                 )
         except Exception as e:
-            print(f"ERROR: {e}")
+            logging.error(f"ERROR: {e}")
 
     ################## SEARCH CVES ####################
 
-    def get_cves(self, tt_filter: time_type) -> dict:
+    def request_cves(self, tt_filter: time_type) -> dict:
         # Given the headers for the API retrive CVEs from cve.circl.lu
         now = datetime.datetime.now() - datetime.timedelta(days=1)
         now_str = now.strftime("%d-%m-%Y")
@@ -118,27 +138,21 @@ class cvereport:
 
         return r.json()
 
-    def get_new_cves(self) -> list:
+    def get_new_cves(self):
         # Get CVEs that are new#
 
-        cves = self.get_cves(time_type.PUBLISHED)
-        filtered_cves, new_last_time = self.filter_cves(
+        cves = self.request_cves(time_type.PUBLISHED)
+        self.new_cves, self.LAST_NEW_CVE = self.filter_cves(
             cves["results"], self.LAST_NEW_CVE, time_type.PUBLISHED
         )
-        self.LAST_NEW_CVE = new_last_time
-
-        return filtered_cves
 
     def get_modified_cves(self) -> list:
         # Get CVEs that has been modified
 
-        cves = self.get_cves(time_type.LAST_MODIFIED)
-        filtered_cves, new_last_time = self.filter_cves(
+        cves = self.request_cves(time_type.LAST_MODIFIED)
+        self.mod_cves, self.LAST_MODIFIED_CVE = self.filter_cves(
             cves["results"], self.LAST_MODIFIED_CVE, time_type.LAST_MODIFIED
         )
-        self.LAST_MODIFIED_CVE = new_last_time
-
-        return filtered_cves
 
     def filter_cves(
         self, cves: list, last_time: datetime.datetime, tt_filter: time_type

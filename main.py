@@ -1,58 +1,35 @@
 import asyncio
 import logging
 import os
-import pathlib
 import sys
-from os.path import join
 
 import aiohttp
-import yaml
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from discord import Embed, HTTPException, RateLimited, Webhook
+from discord import Embed, HTTPException, Webhook
 
 from cvereporter import cvereport, time_type
 from keep_alive import keep_alive
 
-logging.basicConfig(
-    handlers=[
-        logging.FileHandler(
-            filename="cve_reporter_discord.log", encoding="utf-8", mode="w"
-        )
-    ],
-    format="%(asctime)s %(levelname)-8s %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level=logging.DEBUG,
+#################### LOG CONFIG #########################
+
+log = logging.getLogger("cve-reporter")
+log.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter(
+    "%(asctime)s %(levelname)-8s %(message)s", "%Y-%m-%d %H:%M:%S"
 )
 
+# Log to file
+filehandler = logging.FileHandler("cve_reporter_discord.log", "w", "utf-8")
+filehandler.setLevel(logging.DEBUG)
+filehandler.setFormatter(formatter)
+log.addHandler(filehandler)
 
-def load_keywords():
-    # Load keywords from config file
-
-    KEYWORDS_CONFIG_PATH = join(
-        pathlib.Path(__file__).parent.absolute(), "config/config.yaml"
-    )
-    try:
-
-        with open(KEYWORDS_CONFIG_PATH, "r") as yaml_file:
-            keywords_config = yaml.safe_load(yaml_file)
-            print(f"Loaded keywords: {keywords_config}")
-            ALL_VALID = keywords_config["ALL_VALID"]
-            DESCRIPTION_KEYWORDS_I = keywords_config["DESCRIPTION_KEYWORDS_I"]
-            DESCRIPTION_KEYWORDS = keywords_config["DESCRIPTION_KEYWORDS"]
-            PRODUCT_KEYWORDS_I = keywords_config["PRODUCT_KEYWORDS_I"]
-            PRODUCT_KEYWORDS = keywords_config["PRODUCT_KEYWORDS"]
-
-            return (
-                ALL_VALID,
-                DESCRIPTION_KEYWORDS,
-                DESCRIPTION_KEYWORDS_I,
-                PRODUCT_KEYWORDS,
-                PRODUCT_KEYWORDS_I,
-            )
-
-    except Exception as e:
-        logging.error(e)
-        sys.exit(1)
+# Log to stdout too
+streamhandler = logging.StreamHandler()
+streamhandler.setLevel(logging.INFO)
+streamhandler.setFormatter(formatter)
+log.addHandler(streamhandler)
 
 
 #################### SEND MESSAGES #########################
@@ -89,16 +66,24 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
         except HTTPException:
+            model = content.to_dict()["fields"]
+            logging.info(f"{model}")
+            print(f"{model}")
             # except RateLimited(600):
-            if category == "Published":
-                date = content.to_dict()["fields"][f"📅  *Published*"]
-                cve.update_new_cve(date)
-                # await webhook.send(embed=content)
-            elif category == "last-modified":
-                date = content.to_dict()["description"]
-                cve.update_new_modified(date)
-                # await webhook.send(embed=content)
-            # raise
+            # if category == "Published":
+            #     model = content.to_dict()["fields"]
+            #     logging.info(f"{model}")
+            #     print(f"{model}")
+            #     # cve.update_new_cve(date)
+            #     # await webhook.send(embed=content)
+            # elif category == "last-modified":
+            #     model = content.to_dict()["fields"]
+            #     logging.info(f"{model}")
+            #     print(f"{model}")
+            #     # date = content.to_dict()["description"]
+            #     # cve.update_new_modified(date)
+            #     # await webhook.send(embed=content)
+            # # raise
             os.system("kill 1")
 
 
@@ -108,33 +93,19 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
 async def itscheckintime():
 
     try:
-        # Load configured keywords
-        (
-            ALL_VALID,
-            DESCRIPTION_KEYWORDS,
-            DESCRIPTION_KEYWORDS_I,
-            PRODUCT_KEYWORDS,
-            PRODUCT_KEYWORDS_I,
-        ) = load_keywords()
 
-        cve = cvereport(
-            ALL_VALID,
-            DESCRIPTION_KEYWORDS,
-            DESCRIPTION_KEYWORDS_I,
-            PRODUCT_KEYWORDS,
-            PRODUCT_KEYWORDS_I,
-        )
+        cve = cvereport()
 
         # Start loading time of last checked ones
         cve.load_lasttimes()
 
         # Find a publish new CVEs
-        new_cves = cve.get_new_cves()
+        cve.get_new_cves()
 
-        new_cves_ids = [ncve["id"] for ncve in new_cves]
+        new_cves_ids = [ncve["id"] for ncve in cve.new_cves]
         print(f"New CVEs discovered: {new_cves_ids}")
 
-        for new_cve in new_cves:
+        for new_cve in cve.new_cves:
             public_exploits = cve.search_exploits(new_cve["id"])
             cve_message = cve.generate_new_cve_message(new_cve)
             public_expls_msg = cve.generate_public_expls_message(public_exploits)
@@ -143,10 +114,10 @@ async def itscheckintime():
             )
 
         # Find and publish modified CVEs
-        modified_cves = cve.get_modified_cves()
+        cve.get_modified_cves()
 
         modified_cves = [
-            mcve for mcve in modified_cves if mcve["id"] not in new_cves_ids
+            mcve for mcve in cve.mod_cves if mcve["id"] not in new_cves_ids
         ]
         modified_cves_ids = [mcve["id"] for mcve in modified_cves]
         print(f"Modified CVEs discovered: {modified_cves_ids}")
