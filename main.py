@@ -5,7 +5,7 @@ import sys
 
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from discord import Embed, HTTPException, Webhook
+from discord import Embed, HTTPException, RateLimited, Webhook
 
 from cvereporter import cvereport, time_type
 from keep_alive import keep_alive
@@ -62,12 +62,26 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
 
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
-            await webhook.send(embed=content)
+            response = await webhook.send(embed=content)
 
-        except HTTPException:
-            model = content.to_dict()["fields"][2]["value"]
-            logging.info(f"{model}")
-            print(f"{model}")
+            # while response.status != 200:
+            #     if response.status_code == 429:
+            #         raise RateLimited
+            #     else:
+            #         raise HTTPException
+
+        except RateLimited(600):
+
+            if category == "Published":
+                date = content.to_dict()["fields"][2]["value"]
+                cve.update_new_cve(date)
+
+            elif category == "last-modified":
+                date = content.to_dict()["fields"][1]["value"]
+                cve.update_new_modified(date)
+
+        except HTTPException as e:
+            logging.error(f"{e}[:30]")
             # except RateLimited(600):
             # if category == "Published":
             #     model = content.to_dict()["fields"]
@@ -138,6 +152,7 @@ async def itscheckintime():
 
 
 #################### MAIN #########################
+
 if __name__ == "__main__":
     scheduler = AsyncIOScheduler()
     scheduler.add_job(itscheckintime, "interval", minutes=5)

@@ -73,6 +73,7 @@ class cvereport:
         print(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
 
     def update_new_cve(self, published_date):
+        # ratelimited update 1 by 1
         try:
             with open(self.CVES_JSON_PATH, "w") as json_file:
                 json.dump(
@@ -88,6 +89,7 @@ class cvereport:
             logging.error(f"ERROR: {e}")
 
     def update_new_modified(self, modified_date):
+        # ratelimited update 1 by 1
         try:
             with open(self.CVES_JSON_PATH, "w") as json_file:
                 json.dump(
