@@ -274,14 +274,14 @@ class cvereport:
         )
 
         embed.add_field(
-            name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
-        )
-
-        embed.add_field(
             name=f"🗣 *Summary*",
             value=cve_data["summary"]
             if len(cve_data["summary"]) < 400
             else cve_data["summary"][:400] + "...",
+        )
+        
+        embed.add_field(
+            name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
         )
 
         embed.set_footer(
