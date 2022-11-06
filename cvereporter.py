@@ -48,7 +48,7 @@ class cvereport:
                 self.product = keywords_config["PRODUCT_KEYWORDS"]
 
         except Exception as e:
-            logging.error(e)
+            self.logger.error(e)
             sys.exit(1)
 
     ################## LOAD CONFIGURATIONS ####################
@@ -67,7 +67,7 @@ class cvereport:
                 )
 
         except Exception as e:  # If error, just keep the fault date (today - 1 day)
-            logging.error(f"ERROR, using default last times.\n{e}")
+            self.logger.error(f"ERROR, using default last times.\n{e}")
 
         print(f"Last new cve: {self.LAST_NEW_CVE}")
         print(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
@@ -86,7 +86,7 @@ class cvereport:
                     json_file,
                 )
         except Exception as e:
-            logging.error(f"ERROR: {e}")
+            self.logger.error(f"ERROR: {e}")
 
     def update_new_modified(self, modified_date):
         # ratelimited update 1 by 1
@@ -100,7 +100,7 @@ class cvereport:
                     json_file,
                 )
         except Exception as e:
-            logging.error(f"ERROR: {e}")
+            self.logger.error(f"ERROR: {e}")
 
     def update_lasttimes(self):
         # Save lasttimes in json file
@@ -116,7 +116,7 @@ class cvereport:
                     json_file,
                 )
         except Exception as e:
-            logging.error(f"ERROR: {e}")
+            self.logger.error(f"ERROR: {e}")
 
     ################## SEARCH CVES ####################
 
@@ -279,7 +279,7 @@ class cvereport:
             if len(cve_data["summary"]) < 400
             else cve_data["summary"][:400] + "...",
         )
-        
+
         embed.add_field(
             name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
         )

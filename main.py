@@ -15,8 +15,9 @@ from keep_alive import keep_alive
 log = logging.getLogger("cve-reporter")
 log.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter("%(asctime)s %(levelname)-8s %(message)s",
-                              "%Y-%m-%d %H:%M:%S")
+formatter = logging.Formatter(
+    "%(asctime)s %(levelname)-8s %(message)s", "%Y-%m-%d %H:%M:%S"
+)
 
 # Log to file
 filehandler = logging.FileHandler("cve_reporter_discord.log", "w", "utf-8")
@@ -32,8 +33,9 @@ log.addHandler(streamhandler)
 
 
 #################### SEND MESSAGES #########################
-async def send_discord_message(message: Embed, public_expls_msg: str,
-                               tt_filter: time_type, cve: cvereport):
+async def send_discord_message(
+    message: Embed, public_expls_msg: str, tt_filter: time_type, cve: cvereport
+):
     # Send a message to the discord channel webhook
 
     discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
@@ -44,8 +46,8 @@ async def send_discord_message(message: Embed, public_expls_msg: str,
 
     if public_expls_msg:
         message = message.add_field(
-            name=f"😈  *Public Exploits* (_limit 10_)  😈",
-            value=public_expls_msg)
+            name=f"😈  *Public Exploits* (_limit 10_)  😈", value=public_expls_msg
+        )
 
     await sendtowebhook(
         webhookurl=discord_webhook_url,
@@ -55,18 +57,17 @@ async def send_discord_message(message: Embed, public_expls_msg: str,
     )
 
 
-async def sendtowebhook(webhookurl: str, content: Embed, category: str,
-                        cve: cvereport):
+async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cvereport):
     async with aiohttp.ClientSession() as session:
 
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
         except RateLimited(600.0):
-            logging.debug("ratelimited error")
+            log.debug("ratelimited error")
             os.system("kill 1")
         except HTTPException(status=429):
-            logging.debug("http error")
+            log.debug("http error")
             os.system("kill 1")
             # if category == "Published":
             #     date = content.to_dict()["fields"][2]["value"]
@@ -98,10 +99,10 @@ async def itscheckintime():
         for new_cve in cve.new_cves:
             public_exploits = cve.search_exploits(new_cve["id"])
             cve_message = cve.generate_new_cve_message(new_cve)
-            public_expls_msg = cve.generate_public_expls_message(
-                public_exploits)
-            await send_discord_message(cve_message, public_expls_msg,
-                                       time_type.PUBLISHED, cve)
+            public_expls_msg = cve.generate_public_expls_message(public_exploits)
+            await send_discord_message(
+                cve_message, public_expls_msg, time_type.PUBLISHED, cve
+            )
 
         # Find and publish modified CVEs
         cve.get_modified_cves()
@@ -115,16 +116,16 @@ async def itscheckintime():
         for modified_cve in modified_cves:
             public_exploits = cve.search_exploits(modified_cve["id"])
             cve_message = cve.generate_modified_cve_message(modified_cve)
-            public_expls_msg = cve.generate_public_expls_message(
-                public_exploits)
-            await send_discord_message(cve_message, public_expls_msg,
-                                       time_type.LAST_MODIFIED, cve)
+            public_expls_msg = cve.generate_public_expls_message(public_exploits)
+            await send_discord_message(
+                cve_message, public_expls_msg, time_type.LAST_MODIFIED, cve
+            )
 
         # Update last times
         cve.update_lasttimes()
 
     except Exception as e:
-        logging.error(e)
+        log.error(e)
         sys.exit(1)
 
 
@@ -141,5 +142,5 @@ if __name__ == "__main__":
         keep_alive()
         asyncio.get_event_loop().run_forever()
     except (KeyboardInterrupt, SystemExit) as e:
-        logging.error(e)
+        log.error(e)
         raise
