@@ -65,7 +65,7 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str,
         #except RateLimited(600.0):
         #    log.debug("ratelimited error")
         #    os.system("kill 1")
-        except HTTPException():
+        except HTTPException:
             log.debug("http error")
             os.system("kill 1")
             # if category == "Published":
