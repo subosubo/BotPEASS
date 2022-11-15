@@ -21,7 +21,12 @@ DESCRIPTION_KEYWORDS_I:
 - code execution
 - injection
 - denial of service
-- authentication bypass
+- bypass
+- authentication
+- authorization
+- authorisation
+- authorized
+- authorised
 - file inclusion
 - XXE
 - XML External Entity
@@ -43,6 +48,8 @@ DESCRIPTION_KEYWORDS_I:
 - Puzzling
 - resource manipulation
 - race condition
+- verb tampering
+- upload
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
