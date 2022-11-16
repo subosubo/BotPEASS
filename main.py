@@ -61,10 +61,9 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
 
         try:
             webhook = Webhook.from_url(webhookurl, session=session)
-            response = await webhook.send(embed=content)
+            await webhook.send(embed=content)
 
         except HTTPException:
-            log.debug(response.status_code)
             log.debug("http error")
             os.system("kill 1")
 
