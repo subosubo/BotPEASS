@@ -261,6 +261,7 @@ class cvereport:
         # Generate modified CVE message for sending to slack
         # description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
         descript = ""
+        nl = "\n"
         if "cvss-vector" in cve_data and cve_data["cvss-vector"] != "None":
             descript = f"CVSS: {cve_data['cvss-vector']} "
         if "cwe" in cve_data and cve_data["cwe"] != "None":
@@ -282,6 +283,12 @@ class cvereport:
 
         embed.add_field(
             name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
+        )
+
+        embed.add_field(
+            name=f"More Information (_limit to 4_)",
+            value=f"{nl.join(cve_data['references'][:4])}",
+            inline=False,
         )
 
         embed.set_footer(
