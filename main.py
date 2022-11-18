@@ -63,10 +63,11 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
 
-        except HTTPException:
-            log.debug("http error")
-            os.system("kill 1")
-
+        except HTTPException as e:
+                log.error(f"{e}")
+                #log.debug("ratelimited error")
+                os.system("kill 1")
+            
 
 #################### CHECKING for CVE #########################
 
