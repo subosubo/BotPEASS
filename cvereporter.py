@@ -30,6 +30,8 @@ class cvereport:
 
         self.new_cves = []
         self.mod_cves = []
+        self.new_cves_ids = []
+        self.modified_cves_ids = []
 
         # Load keywords from config file
 
@@ -88,20 +90,6 @@ class cvereport:
         except Exception as e:
             self.logger.error(f"ERROR: {e}")
 
-    def update_new_modified(self, modified_date):
-        # ratelimited update 1 by 1
-        try:
-            with open(self.CVES_JSON_PATH, "w") as json_file:
-                json.dump(
-                    {
-                        "LAST_NEW_CVE": self.LAST_NEW_CVE.strftime(self.TIME_FORMAT),
-                        "LAST_MODIFIED_CVE": modified_date,
-                    },
-                    json_file,
-                )
-        except Exception as e:
-            self.logger.error(f"ERROR: {e}")
-
     def update_lasttimes(self):
         # Save lasttimes in json file
         try:
@@ -148,13 +136,23 @@ class cvereport:
             cves["results"], self.LAST_NEW_CVE, time_type.PUBLISHED
         )
 
+        self.new_cves_ids = [ncve["id"] for ncve in self.new_cves]
+        print(f"New CVEs discovered: {self.new_cves_ids}")
+
     def get_modified_cves(self) -> list:
         # Get CVEs that has been modified
+        # only displays modified cves that is not the same as new_cve_id
 
         cves = self.request_cves(time_type.LAST_MODIFIED)
-        self.mod_cves, self.LAST_MODIFIED_CVE = self.filter_cves(
+        modified_cves, self.LAST_MODIFIED_CVE = self.filter_cves(
             cves["results"], self.LAST_MODIFIED_CVE, time_type.LAST_MODIFIED
         )
+        self.mod_cves = [
+            mcve for mcve in modified_cves if mcve["id"] not in self.new_cves_ids
+        ]
+
+        self.modified_cves_ids = [mcve["id"] for mcve in modified_cves]
+        print(f"Modified CVEs discovered: {self.modified_cves_ids}")
 
     def filter_cves(
         self, cves: list, last_time: datetime.datetime, tt_filter: time_type

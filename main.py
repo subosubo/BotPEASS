@@ -64,10 +64,10 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
             await webhook.send(embed=content)
 
         except HTTPException as e:
-                log.error(f"{e}")
-                #log.debug("ratelimited error")
-                os.system("kill 1")
-            
+            log.error(f"{e}")
+            # log.debug("ratelimited error")
+            os.system("kill 1")
+
 
 #################### CHECKING for CVE #########################
 
@@ -75,7 +75,7 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
 async def itscheckintime():
 
     try:
-
+        # new class obj cvereport
         cve = cvereport()
 
         # Start loading time of last checked ones
@@ -84,33 +84,26 @@ async def itscheckintime():
         # Find a publish new CVEs
         cve.get_new_cves()
 
-        new_cves_ids = [ncve["id"] for ncve in cve.new_cves]
-        print(f"New CVEs discovered: {new_cves_ids}")
-
-        for new_cve in cve.new_cves:
-            public_exploits = cve.search_exploits(new_cve["id"])
-            cve_message = cve.generate_new_cve_message(new_cve)
-            public_expls_msg = cve.generate_public_expls_message(public_exploits)
-            await send_discord_message(
-                cve_message, public_expls_msg, time_type.PUBLISHED, cve
-            )
+        if cve.new_cves:
+            for new_cve in cve.new_cves:
+                public_exploits = cve.search_exploits(new_cve["id"])
+                cve_message = cve.generate_new_cve_message(new_cve)
+                public_expls_msg = cve.generate_public_expls_message(public_exploits)
+                await send_discord_message(
+                    cve_message, public_expls_msg, time_type.PUBLISHED, cve
+                )
 
         # Find and publish modified CVEs
         cve.get_modified_cves()
 
-        modified_cves = [
-            mcve for mcve in cve.mod_cves if mcve["id"] not in new_cves_ids
-        ]
-        modified_cves_ids = [mcve["id"] for mcve in modified_cves]
-        print(f"Modified CVEs discovered: {modified_cves_ids}")
-
-        for modified_cve in modified_cves:
-            public_exploits = cve.search_exploits(modified_cve["id"])
-            cve_message = cve.generate_modified_cve_message(modified_cve)
-            public_expls_msg = cve.generate_public_expls_message(public_exploits)
-            await send_discord_message(
-                cve_message, public_expls_msg, time_type.LAST_MODIFIED, cve
-            )
+        if cve.mod_cves:
+            for modified_cve in cve.mod_cves:
+                public_exploits = cve.search_exploits(modified_cve["id"])
+                cve_message = cve.generate_modified_cve_message(modified_cve)
+                public_expls_msg = cve.generate_public_expls_message(public_exploits)
+                await send_discord_message(
+                    cve_message, public_expls_msg, time_type.LAST_MODIFIED, cve
+                )
 
         # Update last times
         cve.update_lasttimes()
