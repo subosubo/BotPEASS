@@ -3,13 +3,18 @@ import logging
 import os
 import sys
 
+from os.path import join, dirname
+from dotenv import load_dotenv
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from cvereporter import cvereport, time_type
 from discord import Embed, HTTPException, Webhook
-from keep_alive import keep_alive
+#from keep_alive import keep_alive
 
 #################### LOG CONFIG #########################
+
+dotenv_path = join(dirname(__file__), ".env")
+load_dotenv(dotenv_path)
 
 log = logging.getLogger("cve-reporter")
 log.setLevel(logging.DEBUG)
@@ -37,7 +42,7 @@ async def send_discord_message(
 ):
     # Send a message to the discord channel webhook
 
-    discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+    discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
 
     if not discord_webhook_url:
         print("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
@@ -123,7 +128,7 @@ if __name__ == "__main__":
 
     # Execution will block here until Ctrl+C (Ctrl+Break on Windows) is pressed.
     try:
-        keep_alive()
+        #keep_alive()
         asyncio.get_event_loop().run_forever()
     except (KeyboardInterrupt, SystemExit) as e:
         log.error(e)
