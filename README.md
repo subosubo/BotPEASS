@@ -7,5 +7,3 @@ All credits goes to carlospolop
 4. Report New and Modified CVE Results on Discord via Discord Webhook
 5. Update time filter
 6. Runs on Async scheduler calling every 5 mins
-7. Kept alive on Replit IDE with UptimeRobot - https://www.youtube.com/watch?v=SPTfmiYiuok
-
