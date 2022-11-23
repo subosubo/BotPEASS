@@ -151,7 +151,7 @@ class cvereport:
             mcve for mcve in modified_cves if mcve["id"] not in self.new_cves_ids
         ]
 
-        self.modified_cves_ids = [mcve["id"] for mcve in modified_cves]
+        self.modified_cves_ids = [mcve["id"] for mcve in self.mod_cves]
         print(f"Modified CVEs discovered: {self.modified_cves_ids}")
 
     def filter_cves(
