@@ -138,6 +138,7 @@ class cvereport:
 
         self.new_cves_ids = [ncve["id"] for ncve in self.new_cves]
         print(f"New CVEs discovered: {self.new_cves_ids}")
+        self.logger.info(f"New CVEs discovered: {self.new_cves_ids}")
 
     def get_modified_cves(self) -> list:
         # Get CVEs that has been modified
@@ -153,6 +154,7 @@ class cvereport:
 
         self.modified_cves_ids = [mcve["id"] for mcve in self.mod_cves]
         print(f"Modified CVEs discovered: {self.modified_cves_ids}")
+        self.logger.info(f"Modified CVEs discovered: {self.modified_cves_ids}")
 
     def filter_cves(
         self, cves: list, last_time: datetime.datetime, tt_filter: time_type

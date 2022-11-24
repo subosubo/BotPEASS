@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 import sys
+from time import sleep
 
 from os.path import join, dirname
 from dotenv import load_dotenv
@@ -9,15 +10,14 @@ import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from cvereporter import cvereport, time_type
 from discord import Embed, HTTPException, Webhook
-#from keep_alive import keep_alive
 
 #################### LOG CONFIG #########################
 
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
-log = logging.getLogger("cve-reporter")
-log.setLevel(logging.DEBUG)
+logger = logging.getLogger("cve-reporter")
+logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter(
     "%(asctime)s %(levelname)-8s %(message)s", "%Y-%m-%d %H:%M:%S"
@@ -27,13 +27,13 @@ formatter = logging.Formatter(
 filehandler = logging.FileHandler("cve_reporter_discord.log", "a", "utf-8")
 filehandler.setLevel(logging.DEBUG)
 filehandler.setFormatter(formatter)
-log.addHandler(filehandler)
+logger.addHandler(filehandler)
 
 # Log to stdout too
 streamhandler = logging.StreamHandler()
 streamhandler.setLevel(logging.INFO)
 streamhandler.setFormatter(formatter)
-log.addHandler(streamhandler)
+logger.addHandler(streamhandler)
 
 
 #################### SEND MESSAGES #########################
@@ -42,7 +42,7 @@ async def send_discord_message(
 ):
     # Send a message to the discord channel webhook
 
-    discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
+    discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
     if not discord_webhook_url:
         print("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
@@ -68,10 +68,9 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
 
-        except HTTPException as e:
-            log.error(f"{e}")
-            # log.debug("ratelimited error")
-            os.system("kill 1")
+        except HTTPException:
+            sleep(180)
+            await webhook.send(embed=content)
 
 
 #################### CHECKING for CVE #########################
@@ -114,7 +113,7 @@ async def itscheckintime():
         cve.update_lasttimes()
 
     except Exception as e:
-        log.error(e)
+        logger.error(e)
         sys.exit(1)
 
 
@@ -128,8 +127,8 @@ if __name__ == "__main__":
 
     # Execution will block here until Ctrl+C (Ctrl+Break on Windows) is pressed.
     try:
-        #keep_alive()
+        # keep_alive()
         asyncio.get_event_loop().run_forever()
     except (KeyboardInterrupt, SystemExit) as e:
-        log.error(e)
+        logger.error(e)
         raise
