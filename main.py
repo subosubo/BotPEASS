@@ -37,6 +37,8 @@ logger.addHandler(streamhandler)
 
 
 #################### SEND MESSAGES #########################
+
+
 async def send_discord_message(
     message: Embed, public_expls_msg: str, tt_filter: time_type, cve: cvereport
 ):

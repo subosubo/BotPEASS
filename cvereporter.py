@@ -6,9 +6,12 @@ import sys
 from enum import Enum
 from os.path import join
 
+import pytz
 import requests
 import yaml
 from discord import Color, Embed
+
+utc = pytz.UTC
 
 
 class time_type(Enum):
@@ -23,8 +26,8 @@ class cvereport:
         self.CVES_JSON_PATH = join(
             pathlib.Path(__file__).parent.absolute(), "output/record.json"
         )
-        self.LAST_NEW_CVE = datetime.datetime.now() - datetime.timedelta(days=1)
-        self.LAST_MODIFIED_CVE = datetime.datetime.now() - datetime.timedelta(days=1)
+        self.LAST_NEW_CVE = datetime.datetime.now(utc) - datetime.timedelta(days=1)
+        self.LAST_MODIFIED_CVE = datetime.datetime.now(utc) - datetime.timedelta(days=1)
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
         self.logger = logging.getLogger("cve-reporter")
 
@@ -74,6 +77,7 @@ class cvereport:
         print(f"Last new cve: {self.LAST_NEW_CVE}")
         print(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
 
+    # not in use - testing
     def update_new_cve(self, published_date):
         # ratelimited update 1 by 1
         try:
@@ -142,12 +146,13 @@ class cvereport:
 
     def get_modified_cves(self) -> list:
         # Get CVEs that has been modified
-        # only displays modified cves that is not the same as new_cve_id
 
         cves = self.request_cves(time_type.LAST_MODIFIED)
         modified_cves, self.LAST_MODIFIED_CVE = self.filter_cves(
             cves["results"], self.LAST_MODIFIED_CVE, time_type.LAST_MODIFIED
         )
+
+        # only displays modified cves that is not the same as new_cve_id
         self.mod_cves = [
             mcve for mcve in modified_cves if mcve["id"] not in self.new_cves_ids
         ]
