@@ -236,7 +236,7 @@ class cvereport:
             description=cve_data["summary"]
             if len(cve_data["summary"]) < 400
             else cve_data["summary"][:400] + "...",
-            timestamp=datetime.datetime.utcnow(),
+            timestamp=datetime.datetime.now(),
             color=Color.blue(),
         )
 
@@ -275,7 +275,7 @@ class cvereport:
         embed = Embed(
             title=f"📣 *{cve_data['id']} Modified*",
             description=descript,
-            timestamp=datetime.datetime.utcnow(),
+            timestamp=datetime.datetime.now(),
             color=Color.gold(),
         )
 
