@@ -29,7 +29,7 @@ class cvereport:
         self.LAST_NEW_CVE = datetime.datetime.now(utc) - datetime.timedelta(days=1)
         self.LAST_MODIFIED_CVE = datetime.datetime.now(utc) - datetime.timedelta(days=1)
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
-        self.logger = logging.getLogger("cve-reporter")
+        self.logger = logging.getLogger(__name__)
 
         self.new_cves = []
         self.mod_cves = []
@@ -72,7 +72,7 @@ class cvereport:
                 )
 
         except Exception as e:  # If error, just keep the fault date (today - 1 day)
-            self.logger.error(f"ERROR, using default last times.\n{e}")
+            self.logger.error(f"ERROR - using default last times.\n{e}")
 
         print(f"Last new cve: {self.LAST_NEW_CVE}")
         print(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
