@@ -163,7 +163,7 @@ async def itscheckintime():
 #################### MAIN #########################
 
 if __name__ == "__main__":
-    scheduler = AsyncIOScheduler()
+    scheduler = AsyncIOScheduler(timezone="Asia/Singapore")
     # scheduler.add_job(itscheckintime, "interval", minutes=5)
     scheduler.add_job(
         itscheckintime, "cron", day_of_week="mon-fri", hour="7-19", minute="*/5"
