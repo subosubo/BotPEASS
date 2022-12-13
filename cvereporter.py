@@ -51,7 +51,7 @@ class cvereport:
                 self.keywords = keywords_config["DESCRIPTION_KEYWORDS"]
                 self.product_i = keywords_config["PRODUCT_KEYWORDS_I"]
                 self.product = keywords_config["PRODUCT_KEYWORDS"]
-
+            yaml_file.close()
         except Exception as e:
             self.logger.error(e)
             sys.exit(1)
@@ -70,7 +70,7 @@ class cvereport:
                 self.LAST_MODIFIED_CVE = datetime.datetime.strptime(
                     cves_time["LAST_MODIFIED_CVE"], self.TIME_FORMAT
                 )
-
+            json_file.close()
         except Exception as e:  # If error, just keep the fault date (today - 1 day)
             self.logger.error(f"ERROR - using default last times.\n{e}")
 
@@ -91,6 +91,7 @@ class cvereport:
                     },
                     json_file,
                 )
+                json_file.close()
         except Exception as e:
             self.logger.error(f"ERROR: {e}")
 
@@ -107,6 +108,7 @@ class cvereport:
                     },
                     json_file,
                 )
+            json_file.close()
         except Exception as e:
             self.logger.error(f"ERROR: {e}")
 
