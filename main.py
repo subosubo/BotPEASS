@@ -50,8 +50,10 @@ def load_cves_to_publish():
     try:
         with open(CVES_JSON_PATH) as fp:
             listcve = json.load(fp)
+        fp.close()
         with open(MOD_CVES_JSON_PATH) as modfp:
             listmodcve = json.load(modfp)
+        modfp.close()
         return listcve, listmodcve
     except Exception as e:
         logger.error(f"ERROR - {e}")
@@ -59,10 +61,12 @@ def load_cves_to_publish():
 
 def store_cve_for_later(listcve, listmodcve):
     try:
-        with open(CVES_JSON_PATH, "w") as json_file:
+        with open(CVES_JSON_PATH, "w") as json_fp:
             json.dump(listcve, json_file, indent=4, separators=(",", ": "))
-        with open(MOD_CVES_JSON_PATH, "w") as json_file:
+        json_fp.close()
+        with open(MOD_CVES_JSON_PATH, "w") as mod_json_fp:
             json.dump(listmodcve, json_file, indent=4, separators=(",", ": "))
+        mod_json_fp.close()
     except Exception as e:
         logger.error(f"ERROR - {e}")
 
