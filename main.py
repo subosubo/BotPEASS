@@ -116,6 +116,9 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
 async def itscheckintime():
 
     try:
+        list_to_pub = []
+        mod_list_to_pub = []
+
         list_to_pub, mod_list_to_pub = load_cves_to_publish()
 
         # new class obj cvereport
