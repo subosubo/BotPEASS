@@ -40,12 +40,14 @@ f_handler.setFormatter(f_format)
 logger.addHandler(c_handler)
 logger.addHandler(f_handler)
 
+#################### LOAD CVE FROM JSON #########################
+
 CVES_JSON_PATH = join(pathlib.Path(__file__).parent.absolute(), "output/cves.json")
 MOD_CVES_JSON_PATH = join(
     pathlib.Path(__file__).parent.absolute(), "output/modcves.json"
 )
 
-#################### LOAD CVE FROM JSON #########################
+
 def load_cves_to_publish():
     try:
         listcve = []
@@ -183,7 +185,6 @@ if __name__ == "__main__":
 
     # Execution will block here until Ctrl+C (Ctrl+Break on Windows) is pressed.
     try:
-        # keep_alive()
         asyncio.get_event_loop().run_forever()
     except (KeyboardInterrupt, SystemExit) as e:
         logger.warning(e)
