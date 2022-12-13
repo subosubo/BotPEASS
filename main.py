@@ -50,9 +50,9 @@ def load_cves_to_publish():
     try:
         with open(CVES_JSON_PATH) as fp:
             listcve = json.load(fp)
-        fp.close()
         with open(MOD_CVES_JSON_PATH) as modfp:
             listmodcve = json.load(modfp)
+        fp.close()
         modfp.close()
         return listcve, listmodcve
     except Exception as e:
@@ -61,12 +61,12 @@ def load_cves_to_publish():
 
 def store_cve_for_later(listcve, listmodcve):
     try:
-        with open(CVES_JSON_PATH, "w") as json_fp:
+        with open(CVES_JSON_PATH, "w") as json_file:
             json.dump(listcve, json_file, indent=4, separators=(",", ": "))
-        json_fp.close()
-        with open(MOD_CVES_JSON_PATH, "w") as mod_json_fp:
-            json.dump(listmodcve, json_file, indent=4, separators=(",", ": "))
-        mod_json_fp.close()
+        with open(MOD_CVES_JSON_PATH, "w") as mod_json_file:
+            json.dump(listmodcve, mod_json_file, indent=4, separators=(",", ": "))
+        json_file.close()
+        mod_json_file.close()
     except Exception as e:
         logger.error(f"ERROR - {e}")
 
@@ -170,9 +170,10 @@ if __name__ == "__main__":
     scheduler = AsyncIOScheduler(timezone="Asia/Singapore")
     # scheduler.add_job(itscheckintime, "interval", minutes=5)
     scheduler.add_job(
-        itscheckintime, "cron", day_of_week="mon-fri", hour="7-19", minute="*/5"
+        itscheckintime, "cron", day_of_week="mon-fri", hour="7-22", minute="*/5"
     )  # only weekdays, 7am - 7pm, every 5 mins interval
     scheduler.start()
+
     print("Press Ctrl+{0} to exit".format("Break" if os.name == "nt" else "C"))
 
     # Execution will block here until Ctrl+C (Ctrl+Break on Windows) is pressed.
@@ -180,5 +181,5 @@ if __name__ == "__main__":
         # keep_alive()
         asyncio.get_event_loop().run_forever()
     except (KeyboardInterrupt, SystemExit) as e:
-        logger.error(e)
+        logger.warning(e)
         raise
