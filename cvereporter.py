@@ -91,7 +91,7 @@ class cvereport:
                     },
                     json_file,
                 )
-                json_file.close()
+            json_file.close()
         except Exception as e:
             self.logger.error(f"ERROR: {e}")
 
