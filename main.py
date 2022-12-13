@@ -175,7 +175,7 @@ if __name__ == "__main__":
     scheduler = AsyncIOScheduler(timezone="Asia/Singapore")
     # scheduler.add_job(itscheckintime, "interval", minutes=5)
     scheduler.add_job(
-        itscheckintime, "cron", day_of_week="mon-fri", hour="7-22", minute="*/5"
+        itscheckintime, "cron", day_of_week="mon-fri", hour="7-18", minute="*/5"
     )  # only weekdays, 7am - 7pm, every 5 mins interval
     scheduler.start()
 
