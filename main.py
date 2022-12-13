@@ -48,6 +48,8 @@ MOD_CVES_JSON_PATH = join(
 #################### LOAD CVE FROM JSON #########################
 def load_cves_to_publish():
     try:
+        listcve = []
+        listmodcve = []
         with open(CVES_JSON_PATH) as fp:
             listcve = json.load(fp)
         with open(MOD_CVES_JSON_PATH) as modfp:
