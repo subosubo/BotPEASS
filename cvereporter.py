@@ -230,7 +230,7 @@ class cvereport:
     #################### GENERATE MESSAGES #########################
 
     def generate_new_cve_message(self, cve_data: dict) -> Embed:
-        # Generate new CVE message for sending to slack
+        # Generate new CVE message for sending to discord
 
         nl = "\n"
         embed = Embed(
@@ -265,7 +265,7 @@ class cvereport:
         return embed
 
     def generate_modified_cve_message(self, cve_data: dict) -> Embed:
-        # Generate modified CVE message for sending to slack
+        # Generate modified CVE message for sending to discord
         # description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
         descript = ""
         nl = "\n"

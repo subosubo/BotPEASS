@@ -54,10 +54,9 @@ def load_cves_to_publish():
         listmodcve = []
         with open(CVES_JSON_PATH) as fp:
             listcve = json.load(fp)
-        with open(MOD_CVES_JSON_PATH) as modfp:
-            listmodcve = json.load(modfp)
+        with open(MOD_CVES_JSON_PATH) as fp:
+            listmodcve = json.load(fp)
         fp.close()
-        modfp.close()
         return listcve, listmodcve
     except Exception as e:
         logger.error(f"ERROR - {e}")
@@ -67,10 +66,9 @@ def store_cve_for_later(listcve, listmodcve):
     try:
         with open(CVES_JSON_PATH, "w") as json_file:
             json.dump(listcve, json_file, indent=4, separators=(",", ": "))
-        with open(MOD_CVES_JSON_PATH, "w") as mod_json_file:
-            json.dump(listmodcve, mod_json_file, indent=4, separators=(",", ": "))
+        with open(MOD_CVES_JSON_PATH, "w") as json_file:
+            json.dump(listmodcve, json_file, indent=4, separators=(",", ": "))
         json_file.close()
-        mod_json_file.close()
     except Exception as e:
         logger.error(f"ERROR - {e}")
 
@@ -175,7 +173,6 @@ async def itscheckintime():
 
 if __name__ == "__main__":
     scheduler = AsyncIOScheduler(timezone="Asia/Singapore")
-    # scheduler.add_job(itscheckintime, "interval", minutes=5)
     scheduler.add_job(
         itscheckintime, "cron", day_of_week="mon-fri", hour="7-18", minute="*/5"
     )  # only weekdays, 7am - 7pm, every 5 mins interval
