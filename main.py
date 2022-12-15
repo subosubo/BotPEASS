@@ -59,7 +59,7 @@ def load_cves_to_publish():
         fp.close()
         return listcve, listmodcve
     except Exception as e:
-        logger.error(f"ERROR - {e}")
+        logger.error(f"ERROR_LOAD:{e}")
 
 
 def store_cve_for_later(listcve, listmodcve):
@@ -70,7 +70,7 @@ def store_cve_for_later(listcve, listmodcve):
             json.dump(listmodcve, json_file, indent=4, separators=(",", ": "))
         json_file.close()
     except Exception as e:
-        logger.error(f"ERROR - {e}")
+        logger.error(f"ERROR_STORE:{e}")
 
 
 #################### SEND MESSAGES #########################
@@ -107,7 +107,8 @@ async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cve
             webhook = Webhook.from_url(webhookurl, session=session)
             await webhook.send(embed=content)
 
-        except HTTPException:
+        except HTTPException as e:
+            logger.error(f"ERROR_SEND_HTTP: {e}")
             sleep(180)
             await webhook.send(embed=content)
 
@@ -165,7 +166,7 @@ async def itscheckintime():
         store_cve_for_later(list_to_pub[max_publish:], mod_list_to_pub[max_publish:])
 
     except Exception as e:
-        logger.error(e)
+        logger.error(f"ERROR-1:{e}")
         sys.exit(1)
 
 
