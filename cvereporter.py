@@ -77,24 +77,6 @@ class cvereport:
         print(f"Last new cve: {self.LAST_NEW_CVE}")
         print(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
 
-    # not in use - testing
-    def update_new_cve(self, published_date):
-        # ratelimited update 1 by 1
-        try:
-            with open(self.CVES_JSON_PATH, "w") as json_file:
-                json.dump(
-                    {
-                        "LAST_NEW_CVE": published_date,
-                        "LAST_MODIFIED_CVE": self.LAST_MODIFIED_CVE.strftime(
-                            self.TIME_FORMAT
-                        ),
-                    },
-                    json_file,
-                )
-            json_file.close()
-        except Exception as e:
-            self.logger.error(f"ERROR: {e}")
-
     def update_lasttimes(self):
         # Save lasttimes in json file
         try:
