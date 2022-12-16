@@ -32,7 +32,8 @@ f_handler.setLevel(logging.ERROR)
 
 # Create formatters and add it to handlers
 c_format = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
-f_format = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+f_format = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 c_handler.setFormatter(c_format)
 f_handler.setFormatter(f_format)
 
@@ -42,7 +43,8 @@ logger.addHandler(f_handler)
 
 #################### LOAD CVE FROM JSON #########################
 
-CVES_JSON_PATH = join(pathlib.Path(__file__).parent.absolute(), "output/cves.json")
+CVES_JSON_PATH = join(pathlib.Path(
+    __file__).parent.absolute(), "output/cves.json")
 MOD_CVES_JSON_PATH = join(
     pathlib.Path(__file__).parent.absolute(), "output/modcves.json"
 )
@@ -149,7 +151,8 @@ async def itscheckintime():
             for new_cve in list_to_pub[:max_publish]:
                 public_exploits = cve.search_exploits(new_cve["id"])
                 cve_message = cve.generate_new_cve_message(new_cve)
-                public_expls_msg = cve.generate_public_expls_message(public_exploits)
+                public_expls_msg = cve.generate_public_expls_message(
+                    public_exploits)
                 await send_discord_message(
                     cve_message, public_expls_msg, time_type.PUBLISHED, cve
                 )
@@ -158,12 +161,14 @@ async def itscheckintime():
             for modified_cve in mod_list_to_pub[:max_publish]:
                 public_exploits = cve.search_exploits(modified_cve["id"])
                 cve_message = cve.generate_modified_cve_message(modified_cve)
-                public_expls_msg = cve.generate_public_expls_message(public_exploits)
+                public_expls_msg = cve.generate_public_expls_message(
+                    public_exploits)
                 await send_discord_message(
                     cve_message, public_expls_msg, time_type.LAST_MODIFIED, cve
                 )
 
-        store_cve_for_later(list_to_pub[max_publish:], mod_list_to_pub[max_publish:])
+        store_cve_for_later(
+            list_to_pub[max_publish:], mod_list_to_pub[max_publish:])
 
     except Exception as e:
         logger.error(f"ERROR-1:{e}")
@@ -175,7 +180,7 @@ async def itscheckintime():
 if __name__ == "__main__":
     scheduler = AsyncIOScheduler(timezone="Asia/Singapore")
     scheduler.add_job(
-        itscheckintime, "cron", day_of_week="mon-fri", hour="7-18", minute="*/5"
+        itscheckintime, "cron", day_of_week="mon-fri", hour="8-18", minute="*/5"
     )  # only weekdays, 7am - 7pm, every 5 mins interval
     scheduler.start()
 
