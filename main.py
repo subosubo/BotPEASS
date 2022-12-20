@@ -52,8 +52,6 @@ MOD_CVES_JSON_PATH = join(
 
 def load_cves_to_publish():
     try:
-        listcve = []
-        listmodcve = []
         with open(CVES_JSON_PATH) as fp:
             listcve = json.load(fp)
         with open(MOD_CVES_JSON_PATH) as fp:
@@ -136,9 +134,6 @@ async def sendtowebhook(webhookurl: str, content: Embed):
 async def itscheckintime():
 
     try:
-        list_to_pub = []
-        mod_list_to_pub = []
-
         list_to_pub, mod_list_to_pub = load_cves_to_publish()
 
         # new class obj cvereport
