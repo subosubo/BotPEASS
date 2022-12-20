@@ -26,8 +26,10 @@ class cvereport:
         self.CVES_JSON_PATH = join(
             pathlib.Path(__file__).parent.absolute(), "output/record.json"
         )
-        self.LAST_NEW_CVE = datetime.datetime.now(utc) - datetime.timedelta(days=1)
-        self.LAST_MODIFIED_CVE = datetime.datetime.now(utc) - datetime.timedelta(days=1)
+        self.LAST_NEW_CVE = datetime.datetime.now(
+            utc) - datetime.timedelta(days=1)
+        self.LAST_MODIFIED_CVE = datetime.datetime.now(
+            utc) - datetime.timedelta(days=1)
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
         self.logger = logging.getLogger(__name__)
 
@@ -71,7 +73,8 @@ class cvereport:
                     cves_time["LAST_MODIFIED_CVE"], self.TIME_FORMAT
                 )
             json_file.close()
-        except Exception as e:  # If error, just keep the fault date (today - 1 day)
+        # If error, just keep the fault date (today - 1 day)
+        except Exception as e:
             self.logger.error(f"ERROR - using default last times.\n{e}")
 
         print(f"Last new cve: {self.LAST_NEW_CVE}")
@@ -225,7 +228,8 @@ class cvereport:
         )
 
         if cve_data["cvss"] != "None":
-            embed.add_field(name=f"🔮  *CVSS*", value=f"{cve_data['cvss']}", inline=True)
+            embed.add_field(name=f"🔮  *CVSS*",
+                            value=f"{cve_data['cvss']}", inline=True)
 
         embed.add_field(
             name=f"📅  *Published*", value=f"{cve_data['Published']}", inline=True
@@ -249,40 +253,41 @@ class cvereport:
     def generate_modified_cve_message(self, cve_data: dict) -> Embed:
         # Generate modified CVE message for sending to discord
         # description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
-        descript = ""
-        nl = "\n"
-        if "cvss-vector" in cve_data and cve_data["cvss-vector"] != "None":
-            descript = f"CVSS: {cve_data['cvss-vector']} "
-        if "cwe" in cve_data and cve_data["cwe"] != "None":
-            descript += f"CWE: {cve_data['cwe']}"
+        if cve_data['references']:
+            descript = ""
+            nl = "\n"
+            if "cvss-vector" in cve_data and cve_data["cvss-vector"] != "None":
+                descript = f"CVSS: {cve_data['cvss-vector']} "
+            if "cwe" in cve_data and cve_data["cwe"] != "None":
+                descript += f"CWE: {cve_data['cwe']}"
 
-        embed = Embed(
-            title=f"📣 *{cve_data['id']} Modified*",
-            description=descript,
-            timestamp=datetime.datetime.now(),
-            color=Color.gold(),
-        )
+            embed = Embed(
+                title=f"📣 *{cve_data['id']} Modified*",
+                description=descript,
+                timestamp=datetime.datetime.now(),
+                color=Color.gold(),
+            )
 
-        embed.add_field(
-            name=f"🗣 *Summary*",
-            value=cve_data["summary"]
-            if len(cve_data["summary"]) < 400
-            else cve_data["summary"][:400] + "...",
-        )
+            embed.add_field(
+                name=f"🗣 *Summary*",
+                value=cve_data["summary"]
+                if len(cve_data["summary"]) < 400
+                else cve_data["summary"][:400] + "...",
+            )
 
-        embed.add_field(
-            name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
-        )
+            embed.add_field(
+                name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
+            )
 
-        embed.add_field(
-            name=f"More Information (_limit to 4_)",
-            value=f"{nl.join(cve_data['references'][:4])}",
-            inline=False,
-        )
+            embed.add_field(
+                name=f"More Information (_limit to 4_)",
+                value=f"{nl.join(cve_data['references'][:4])}",
+                inline=False,
+            )
 
-        embed.set_footer(
-            text=f"(First published on {cve_data['Published'].split('T')[0]})\n"
-        )
+            embed.set_footer(
+                text=f"(First published on {cve_data['Published'].split('T')[0]})\n"
+            )
 
         return embed
 
