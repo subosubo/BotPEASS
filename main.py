@@ -158,7 +158,8 @@ async def itscheckintime():
             list_to_pub.append(new_cve)
 
         for modified_cve in cve.mod_cves:
-            mod_list_to_pub.append(modified_cve)
+            if modified_cve['references']:
+                mod_list_to_pub.append(modified_cve)
 
         if list_to_pub:
             for new_cve in list_to_pub[:max_publish]:
@@ -167,7 +168,6 @@ async def itscheckintime():
 
         if mod_list_to_pub:
             for modified_cve in mod_list_to_pub[:max_publish]:
-                print(f"{modified_cve}")
                 cve_message = cve.generate_modified_cve_message(modified_cve)
                 await send_discord_message(cve_message)
 
