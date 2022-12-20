@@ -163,11 +163,13 @@ async def itscheckintime():
         if list_to_pub:
             for new_cve in list_to_pub[:max_publish]:
                 cve_message = cve.generate_new_cve_message(new_cve)
+                logging.info(f"INFO-loaded:{cve_message}")
                 await send_discord_message(cve_message)
 
         if mod_list_to_pub:
             for modified_cve in mod_list_to_pub[:max_publish]:
                 cve_message = cve.generate_modified_cve_message(modified_cve)
+                logging.info(f"INFO-loaded:{cve_message}")
                 await send_discord_message(cve_message)
 
         store_cve_for_later(
