@@ -79,7 +79,7 @@ def store_cve_for_later(listcve, listmodcve):
 
 
 async def send_discord_message(
-    message: Embed, public_expls_msg: str, tt_filter: time_type, cve: cvereport
+    message: Embed, public_expls_msg: str
 ):
     # Send a message to the discord channel webhook
 
@@ -96,13 +96,28 @@ async def send_discord_message(
 
     await sendtowebhook(
         webhookurl=discord_webhook_url,
-        content=message,
-        category=tt_filter.value,
-        cve=cve,
+        content=message
     )
 
 
-async def sendtowebhook(webhookurl: str, content: Embed, category: str, cve: cvereport):
+async def send_discord_message(
+    message: Embed
+):
+    # Send a message to the discord channel webhook
+
+    discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+
+    if not discord_webhook_url:
+        print("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
+        return
+
+    await sendtowebhook(
+        webhookurl=discord_webhook_url,
+        content=message
+    )
+
+
+async def sendtowebhook(webhookurl: str, content: Embed):
     async with aiohttp.ClientSession() as session:
 
         try:
@@ -147,23 +162,13 @@ async def itscheckintime():
 
         if list_to_pub:
             for new_cve in list_to_pub[:max_publish]:
-                public_exploits = cve.search_exploits(new_cve["id"])
                 cve_message = cve.generate_new_cve_message(new_cve)
-                public_expls_msg = cve.generate_public_expls_message(
-                    public_exploits)
-                await send_discord_message(
-                    cve_message, public_expls_msg, time_type.PUBLISHED, cve
-                )
+                await send_discord_message(cve_message)
 
         if mod_list_to_pub:
             for modified_cve in mod_list_to_pub[:max_publish]:
-                public_exploits = cve.search_exploits(modified_cve["id"])
                 cve_message = cve.generate_modified_cve_message(modified_cve)
-                public_expls_msg = cve.generate_public_expls_message(
-                    public_exploits)
-                await send_discord_message(
-                    cve_message, public_expls_msg, time_type.LAST_MODIFIED, cve
-                )
+                await send_discord_message(cve_message)
 
         store_cve_for_later(
             list_to_pub[max_publish:], mod_list_to_pub[max_publish:])
