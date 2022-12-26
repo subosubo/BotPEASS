@@ -5,6 +5,7 @@ import pathlib
 import sys
 from enum import Enum
 from os.path import join
+from cvss import CVSS3
 
 import pytz
 import requests
@@ -255,8 +256,8 @@ class cvereport:
         # description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
         descript = ""
         nl = "\n"
-        if "cvss-vector" in cve_data and cve_data["cvss-vector"] != "None":
-            descript = f"CVSS: {cve_data['cvss-vector']} "
+        if "cvss-vector" in cve_data and cve_data["cvss-vector"] != "None" and "cvss" in cve_data and cve_data['cvss'] != "None":
+            descript = f"CVSS: {cve_data['cvss-vector']} ({cve_data['cvss']})"
         if "cwe" in cve_data and cve_data["cwe"] != "None":
             descript += f"CWE: {cve_data['cwe']}"
 
