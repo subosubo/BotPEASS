@@ -164,8 +164,8 @@ async def itscheckintime():
         # Update last times
         cve.update_lasttimes()
 
-        list_to_pub.extend(cve.new_cves)
-        mod_list_to_pub.extend(cve.mod_cves)
+        list_to_pub.extend(cve.new_cves.reverse())
+        mod_list_to_pub.extend(cve.mod_cves.reverse())
 
         if list_to_pub:
             for new_cve in list_to_pub[:max_publish]:
@@ -201,5 +201,5 @@ if __name__ == "__main__":
     try:
         asyncio.get_event_loop().run_forever()
     except (KeyboardInterrupt, SystemExit) as e:
-        logger.warning(e)
+        logger.info(e)
         raise
