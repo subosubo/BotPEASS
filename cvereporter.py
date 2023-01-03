@@ -163,15 +163,14 @@ class cvereport:
             # cve time is api data
             # caters to multiple new cves with same published/modified time
             print(f"cvetime:{cve_time}/record:{last_time}")
-            if cve_time > last_time:
-                if (
-                    self.valid
-                    or self.is_summ_keyword_present(cve['summary'])
-                    or self.is_prod_keyword_present(
-                        str(cve['vulnerable_configuration'])
-                    )
-                ):
-                    filtered_cves.append(cve)
+            if cve_time > last_time and (
+                self.valid
+                or self.is_summ_keyword_present(cve['summary'])
+                or self.is_prod_keyword_present(
+                    str(cve['vulnerable_configuration'])
+                )
+            ):
+                filtered_cves.append(cve)
 
             if cve_time > new_last_time:
                 new_last_time = cve_time
