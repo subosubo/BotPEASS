@@ -162,6 +162,7 @@ class cvereport:
             # last_time is from config
             # cve time is api data
             # caters to multiple new cves with same published/modified time
+            print(f"cvetime:{cve_time}/record:{last_time}")
             if cve_time > last_time:
                 if (
                     self.valid
@@ -170,7 +171,6 @@ class cvereport:
                         str(cve['vulnerable_configuration'])
                     )
                 ):
-                    print(cve)
                     filtered_cves.append(cve)
 
             if cve_time > new_last_time:
