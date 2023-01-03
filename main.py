@@ -25,6 +25,7 @@ max_publish = 3
 
 # create logger
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # create console handler and set level to debug
 consolelog = logging.StreamHandler()
