@@ -163,7 +163,7 @@ class cvereport:
             # last_time is from config
             # cve time is api data
             # caters to multiple new cves with same published/modified time
-            if cve_time >= last_time:
+            if cve_time > last_time:
                 if (
                     self.valid
                     or self.is_summ_keyword_present(cve["summary"])
