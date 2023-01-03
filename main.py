@@ -38,12 +38,12 @@ formatter = logging.Formatter(
 # add formatter to ch
 consolelog.setFormatter(formatter)
 
-# create file handler and set level to warning
+# create file handler and set level to debug
 log_dir = Path(__file__).parent.absolute()
 log_dir.mkdir(parents=True, exist_ok=True)
 filelog = logging.FileHandler(
     log_dir / 'cve_reporter_logfile.log', "a", "utf-8")
-filelog.setLevel(logging.WARNING)
+filelog.setLevel(logging.DEBUG)
 
 # create formatter
 formatter = logging.Formatter(
