@@ -3,12 +3,14 @@ import logging
 import os
 import sys
 from time import sleep
+from pathlib import Path
+
 
 from os.path import join, dirname
 from dotenv import load_dotenv
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from cvereporter import cvereport, time_type
+from cvereporter import cvereport
 from discord import Embed, HTTPException, Webhook
 import pathlib
 import json
@@ -21,25 +23,37 @@ max_publish = 3
 
 #################### LOG CONFIG #########################
 
-# Create a custom logger
+# create logger
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
 
-# Create handlers
-c_handler = logging.StreamHandler()
-f_handler = logging.FileHandler("cve_reporter_discord.log", "a", "utf-8")
-c_handler.setLevel(logging.WARNING)
-f_handler.setLevel(logging.ERROR)
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
 
-# Create formatters and add it to handlers
-c_format = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
-f_format = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-c_handler.setFormatter(c_format)
-f_handler.setFormatter(f_format)
+# create formatter
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-# Add handlers to the logger
-logger.addHandler(c_handler)
-logger.addHandler(f_handler)
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# create file handler and set level to warning
+log_dir = Path(__file__).parent.absolute()
+log_dir.mkdir(parents=True, exist_ok=True)
+fh = logging.FileHandler(log_dir / 'cve_reporter_logfile.log', "a", "utf-8")
+fh.setLevel(logging.WARNING)
+
+# create formatter
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# add formatter to fh
+fh.setFormatter(formatter)
+
+# add ch and fh to logger
+logger.addHandler(ch)
+logger.addHandler(fh)
 
 #################### LOAD CVE FROM JSON #########################
 
@@ -180,7 +194,7 @@ if __name__ == "__main__":
     scheduler = AsyncIOScheduler(timezone="Asia/Singapore")
     scheduler.add_job(
         itscheckintime, "cron", day_of_week="mon-fri", hour="8-18", minute="*/12"
-    )  # only weekdays, 7am - 7pm, every 5 mins interval
+    )  # only weekdays, singapore time zone, from 8am - 6.48pm
     scheduler.start()
 
     print("Press Ctrl+{0} to exit".format("Break" if os.name == "nt" else "C"))
