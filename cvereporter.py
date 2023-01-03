@@ -31,9 +31,8 @@ class cvereport:
         self.LAST_MODIFIED_CVE = datetime.datetime.now(
             utc) - datetime.timedelta(days=1)
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
-        self.logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger("__main__")
         self.logger.setLevel(logging.INFO)
-        print(f"cve2:{__name__}")
 
         self.new_cves = []
         self.mod_cves = []
