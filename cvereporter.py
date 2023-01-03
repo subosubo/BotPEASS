@@ -47,7 +47,7 @@ class cvereport:
 
             with open(self.KEYWORDS_CONFIG_PATH, "r") as yaml_file:
                 keywords_config = yaml.safe_load(yaml_file)
-                print(f"Loaded keywords: {keywords_config}")
+                self.logger.info(f"Loaded keywords: {keywords_config}")
                 self.valid = keywords_config["ALL_VALID"]
                 self.keywords_i = keywords_config["DESCRIPTION_KEYWORDS_I"]
                 self.keywords = keywords_config["DESCRIPTION_KEYWORDS"]
@@ -77,8 +77,8 @@ class cvereport:
         except Exception as e:
             self.logger.error(f"ERROR - using default last times.\n{e}")
 
-        print(f"Last new cve: {self.LAST_NEW_CVE}")
-        print(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
+        self.logger.info(f"Last new cve: {self.LAST_NEW_CVE}")
+        self.logger.info(f"Last modified cve: {self.LAST_MODIFIED_CVE}")
 
     def update_lasttimes(self):
         # Save lasttimes in json file
@@ -128,7 +128,6 @@ class cvereport:
         )
 
         self.new_cves_ids = [ncve["id"] for ncve in self.new_cves]
-        print(f"New CVEs discovered: {self.new_cves_ids}")
         self.logger.info(f"New CVEs discovered: {self.new_cves_ids}")
 
     def get_modified_cves(self) -> list:
@@ -145,7 +144,6 @@ class cvereport:
         ]
 
         self.modified_cves_ids = [mcve["id"] for mcve in self.mod_cves]
-        print(f"Modified CVEs discovered: {self.modified_cves_ids}")
         self.logger.info(f"Modified CVEs discovered: {self.modified_cves_ids}")
 
     def filter_cves(

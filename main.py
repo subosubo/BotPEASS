@@ -98,7 +98,7 @@ async def send_discord_message(
     discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
     if not discord_webhook_url:
-        print("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
+        logger.error("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
         return
 
     if public_expls_msg:
@@ -120,7 +120,7 @@ async def send_discord_message(
     discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
     if not discord_webhook_url:
-        print("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
+        logger.error("DISCORD_WEBHOOK_URL wasn't configured in the secrets!")
         return
 
     await sendtowebhook(
@@ -197,7 +197,8 @@ if __name__ == "__main__":
     )  # only weekdays, singapore time zone, from 8am - 6.48pm
     scheduler.start()
 
-    print("Press Ctrl+{0} to exit".format("Break" if os.name == "nt" else "C"))
+    logger.info(
+        "Press Ctrl+{0} to exit".format("Break" if os.name == "nt" else "C"))
 
     # Execution will block here until Ctrl+C (Ctrl+Break on Windows) is pressed.
     try:
