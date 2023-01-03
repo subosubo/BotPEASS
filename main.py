@@ -4,8 +4,6 @@ import os
 import sys
 from time import sleep
 from pathlib import Path
-
-
 from os.path import join, dirname
 from dotenv import load_dotenv
 import aiohttp
@@ -162,9 +160,6 @@ async def itscheckintime():
         cve.get_new_cves()
         cve.get_modified_cves()
 
-        # Update last times
-        cve.update_lasttimes()
-
         list_to_pub.extend(list(reversed(cve.new_cves)))
         mod_list_to_pub.extend(list(reversed(cve.mod_cves)))
 
@@ -177,6 +172,9 @@ async def itscheckintime():
             for modified_cve in mod_list_to_pub[:max_publish]:
                 cve_message = cve.generate_modified_cve_message(modified_cve)
                 await send_discord_message(cve_message)
+
+        # Update last times
+        cve.update_lasttimes()
 
         store_cve_for_later(
             list_to_pub[max_publish:], mod_list_to_pub[max_publish:])
@@ -191,7 +189,7 @@ async def itscheckintime():
 if __name__ == "__main__":
     scheduler = AsyncIOScheduler(timezone="Asia/Singapore")
     scheduler.add_job(
-        itscheckintime, "cron", day_of_week="mon-fri", hour="8-18", minute="*/3"
+        itscheckintime, "cron", day_of_week="mon-fri", hour="8-18", minute="*/12"
     )  # only weekdays, singapore time zone, from 8am - 6.48pm
     scheduler.start()
 

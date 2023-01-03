@@ -141,7 +141,7 @@ class cvereport:
 
         # only displays modified cves that is not the same as new_cve_id and
         self.mod_cves = [
-            mcve for mcve in modified_cves if mcve['id'] not in self.new_cves_ids and mcve['references']
+            mcve for mcve in modified_cves if mcve['id'] not in self.new_cves_ids
         ]
 
         self.modified_cves_ids = [mcve['id'] for mcve in self.mod_cves]
@@ -156,6 +156,10 @@ class cvereport:
         new_last_time = last_time
 
         for cve in cves:
+            # if report has no references, skip to next report
+            if not cve['references']:
+                continue
+
             cve_time = datetime.datetime.strptime(
                 cve[tt_filter.value], self.TIME_FORMAT
             )
