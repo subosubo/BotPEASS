@@ -33,7 +33,7 @@ class cvereport:
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
-        print(f"{__name__}")
+        print(f"cve2:{__name__}")
 
         self.new_cves = []
         self.mod_cves = []

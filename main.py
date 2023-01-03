@@ -26,6 +26,8 @@ max_publish = 3
 # create logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+print(f"cve1:{__name__}")
+
 
 # create console handler and set level to debug
 consolelog = logging.StreamHandler()
