@@ -25,35 +25,35 @@ max_publish = 3
 
 # create logger
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.WARNING)
 
 # create console handler and set level to debug
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+consolelog = logging.StreamHandler()
+consolelog.setLevel(logging.INFO)
 
 # create formatter
 formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # add formatter to ch
-ch.setFormatter(formatter)
+consolelog.setFormatter(formatter)
 
 # create file handler and set level to warning
 log_dir = Path(__file__).parent.absolute()
 log_dir.mkdir(parents=True, exist_ok=True)
-fh = logging.FileHandler(log_dir / 'cve_reporter_logfile.log', "a", "utf-8")
-fh.setLevel(logging.WARNING)
+filelog = logging.FileHandler(
+    log_dir / 'cve_reporter_logfile.log', "a", "utf-8")
+filelog.setLevel(logging.WARNING)
 
 # create formatter
 formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # add formatter to fh
-fh.setFormatter(formatter)
+filelog.setFormatter(formatter)
 
 # add ch and fh to logger
-logger.addHandler(ch)
-logger.addHandler(fh)
+logger.addHandler(consolelog)
+logger.addHandler(filelog)
 
 #################### LOAD CVE FROM JSON #########################
 
@@ -163,12 +163,8 @@ async def itscheckintime():
         # Update last times
         cve.update_lasttimes()
 
-        for new_cve in cve.new_cves:
-            list_to_pub.append(new_cve)
-
-        for modified_cve in cve.mod_cves:
-            if modified_cve['references']:
-                mod_list_to_pub.append(modified_cve)
+        list_to_pub.extend(cve.new_cves)
+        mod_list_to_pub.extend(cve.mod_cves)
 
         if list_to_pub:
             for new_cve in list_to_pub[:max_publish]:

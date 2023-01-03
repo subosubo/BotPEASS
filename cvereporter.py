@@ -48,11 +48,11 @@ class cvereport:
             with open(self.KEYWORDS_CONFIG_PATH, "r") as yaml_file:
                 keywords_config = yaml.safe_load(yaml_file)
                 self.logger.info(f"Loaded keywords: {keywords_config}")
-                self.valid = keywords_config["ALL_VALID"]
-                self.keywords_i = keywords_config["DESCRIPTION_KEYWORDS_I"]
-                self.keywords = keywords_config["DESCRIPTION_KEYWORDS"]
-                self.product_i = keywords_config["PRODUCT_KEYWORDS_I"]
-                self.product = keywords_config["PRODUCT_KEYWORDS"]
+                self.valid = keywords_config['ALL_VALID']
+                self.keywords_i = keywords_config['DESCRIPTION_KEYWORDS_I']
+                self.keywords = keywords_config['DESCRIPTION_KEYWORDS']
+                self.product_i = keywords_config['PRODUCT_KEYWORDS_I']
+                self.product = keywords_config['PRODUCT_KEYWORDS']
             yaml_file.close()
         except Exception as e:
             self.logger.error(e)
@@ -67,10 +67,10 @@ class cvereport:
             with open(self.CVES_JSON_PATH, "r") as json_file:
                 cves_time = json.load(json_file)
                 self.LAST_NEW_CVE = datetime.datetime.strptime(
-                    cves_time["LAST_NEW_CVE"], self.TIME_FORMAT
+                    cves_time['LAST_NEW_CVE'], self.TIME_FORMAT
                 )
                 self.LAST_MODIFIED_CVE = datetime.datetime.strptime(
-                    cves_time["LAST_MODIFIED_CVE"], self.TIME_FORMAT
+                    cves_time['LAST_MODIFIED_CVE'], self.TIME_FORMAT
                 )
             json_file.close()
         # If error, just keep the fault date (today - 1 day)
@@ -124,10 +124,10 @@ class cvereport:
 
         cves = self.request_cves(time_type.PUBLISHED)
         self.new_cves, self.LAST_NEW_CVE = self.filter_cves(
-            cves["results"], self.LAST_NEW_CVE, time_type.PUBLISHED
+            cves['results'], self.LAST_NEW_CVE, time_type.PUBLISHED
         )
 
-        self.new_cves_ids = [ncve["id"] for ncve in self.new_cves]
+        self.new_cves_ids = [ncve['id'] for ncve in self.new_cves]
         self.logger.info(f"New CVEs discovered: {self.new_cves_ids}")
 
     def get_modified_cves(self) -> list:
@@ -135,15 +135,15 @@ class cvereport:
 
         cves = self.request_cves(time_type.LAST_MODIFIED)
         modified_cves, self.LAST_MODIFIED_CVE = self.filter_cves(
-            cves["results"], self.LAST_MODIFIED_CVE, time_type.LAST_MODIFIED
+            cves['results'], self.LAST_MODIFIED_CVE, time_type.LAST_MODIFIED
         )
 
-        # only displays modified cves that is not the same as new_cve_id
+        # only displays modified cves that is not the same as new_cve_id and
         self.mod_cves = [
-            mcve for mcve in modified_cves if mcve["id"] not in self.new_cves_ids
+            mcve for mcve in modified_cves if mcve['id'] not in self.new_cves_ids and mcve['references']
         ]
 
-        self.modified_cves_ids = [mcve["id"] for mcve in self.mod_cves]
+        self.modified_cves_ids = [mcve['id'] for mcve in self.mod_cves]
         self.logger.info(f"Modified CVEs discovered: {self.modified_cves_ids}")
 
     def filter_cves(
@@ -164,9 +164,9 @@ class cvereport:
             if cve_time > last_time:
                 if (
                     self.valid
-                    or self.is_summ_keyword_present(cve["summary"])
+                    or self.is_summ_keyword_present(cve['summary'])
                     or self.is_prod_keyword_present(
-                        str(cve["vulnerable_configuration"])
+                        str(cve['vulnerable_configuration'])
                     )
                 ):
 
@@ -203,7 +203,7 @@ class cvereport:
         # if vulners_api_key:
         #     vulners_api = vulners.VulnersApi(api_key=vulners_api_key)
         #     cve_data = vulners_api.find_exploit_all(cve)
-        #     return [v["vhref"] for v in cve_data]
+        #     return [v['vhref'] for v in cve_data]
 
         # else:
         #     print("VULNERS_API_KEY wasn't configured in the secrets!")
@@ -218,14 +218,14 @@ class cvereport:
         nl = "\n"
         embed = Embed(
             title=f"🚨  *{cve_data['id']}*  🚨",
-            description=cve_data["summary"]
-            if len(cve_data["summary"]) < 400
-            else cve_data["summary"][:400] + "...",
+            description=cve_data['summary']
+            if len(cve_data['summary']) < 400
+            else cve_data['summary'][:400] + "...",
             timestamp=datetime.datetime.now(),
             color=Color.blue(),
         )
 
-        if cve_data["cvss"] != "None":
+        if cve_data['cvss'] != "None":
             embed.add_field(name=f"🔮  *CVSS*",
                             value=f"{cve_data['cvss']}", inline=True)
 
@@ -233,7 +233,7 @@ class cvereport:
             name=f"📅  *Published*", value=f"{cve_data['Published']}", inline=True
         )
 
-        if cve_data["vulnerable_configuration"]:
+        if cve_data['vulnerable_configuration']:
             embed.add_field(
                 name=f"🔓  *Vulnerable* (_limit to 6_)",
                 value=f"{nl.join(cve_data['vulnerable_configuration'][:6])}",
@@ -253,9 +253,9 @@ class cvereport:
         # description=f"*{cve_data['id']}*(_{cve_data['cvss']}_) was modified on {cve_data['last-modified'].split('T')[0]}",
         descript = ""
         nl = "\n"
-        if "cvss-vector" in cve_data and cve_data["cvss-vector"] != "None" and "cvss" in cve_data and cve_data['cvss'] != "None":
+        if "cvss-vector" in cve_data and cve_data['cvss-vector'] != "None" and "cvss" in cve_data and cve_data['cvss'] != "None":
             descript = f"CVSS: {cve_data['cvss-vector']} ({cve_data['cvss']}){nl}"
-        if "cwe" in cve_data and cve_data["cwe"] != "None":
+        if "cwe" in cve_data and cve_data['cwe'] != "None":
             descript += f"CWE: {cve_data['cwe']}"
 
         embed = Embed(
@@ -267,9 +267,9 @@ class cvereport:
 
         embed.add_field(
             name=f"🗣 *Summary*",
-            value=cve_data["summary"]
-            if len(cve_data["summary"]) < 400
-            else cve_data["summary"][:400] + "...",
+            value=cve_data['summary']
+            if len(cve_data['summary']) < 400
+            else cve_data['summary'][:400] + "...",
         )
 
         embed.add_field(
