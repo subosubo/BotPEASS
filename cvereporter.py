@@ -154,16 +154,14 @@ class cvereport:
 
         filtered_cves = []
         new_last_time = last_time
-        cves_rev = list(reversed(cves))
 
-        for cve in cves_rev:
+        for cve in cves:
             cve_time = datetime.datetime.strptime(
                 cve[tt_filter.value], self.TIME_FORMAT
             )
             # last_time is from config
             # cve time is api data
             # caters to multiple new cves with same published/modified time
-            print(f"cvetime:{cve_time}/record:{last_time}")
             if cve_time > last_time and (
                 self.valid
                 or self.is_summ_keyword_present(cve['summary'])
