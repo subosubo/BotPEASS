@@ -164,8 +164,8 @@ async def itscheckintime():
         # Update last times
         cve.update_lasttimes()
 
-        list_to_pub.extend(cve.new_cves.reverse())
-        mod_list_to_pub.extend(cve.mod_cves.reverse())
+        list_to_pub.extend(list(reversed(cve.new_cves)))
+        mod_list_to_pub.extend(list(reversed(cve.mod_cves)))
 
         if list_to_pub:
             for new_cve in list_to_pub[:max_publish]:
