@@ -32,6 +32,7 @@ class cvereport:
             utc) - datetime.timedelta(days=1)
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
         self.logger = logging.getLogger(__name__)
+        print(f"{__main__}")
 
         self.new_cves = []
         self.mod_cves = []
