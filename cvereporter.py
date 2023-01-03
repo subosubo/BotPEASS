@@ -154,8 +154,6 @@ class cvereport:
         filtered_cves = []
         new_last_time = last_time
 
-        print(f"{cves}")
-
         for cve in cves:
             cve_time = datetime.datetime.strptime(
                 cve[tt_filter.value], self.TIME_FORMAT
@@ -171,7 +169,7 @@ class cvereport:
                         str(cve['vulnerable_configuration'])
                     )
                 ):
-
+                    print(cve)
                     filtered_cves.append(cve)
 
             if cve_time > new_last_time:
