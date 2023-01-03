@@ -50,6 +50,8 @@ DESCRIPTION_KEYWORDS_I:
 - race condition
 - verb tampering
 - upload
+- out-of-bounds
+- out of bounds
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
