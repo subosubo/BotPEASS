@@ -154,6 +154,8 @@ class cvereport:
         filtered_cves = []
         new_last_time = last_time
 
+        print(f"{cves}")
+
         for cve in cves:
             cve_time = datetime.datetime.strptime(
                 cve[tt_filter.value], self.TIME_FORMAT
