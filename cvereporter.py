@@ -168,11 +168,9 @@ class cvereport:
             # caters to multiple new cves with same published/modified time
 
             # list.extend from both functions
-            # match_keyword = self.is_summ_keyword_present(cve['summary']).extend(self.is_prod_keyword_present(
-            #    str(cve['vulnerable_configuration'])))
-
             match_keyword = self.is_summ_keyword_present(cve['summary'])
-            print(match_keyword)
+            match_keyword.extend(self.is_prod_keyword_present(
+                str(cve['vulnerable_configuration'])))
 
             if cve_time > last_time and (self.valid or match_keyword):
                 cve['keywords'] = match_keyword
@@ -186,8 +184,11 @@ class cvereport:
     def is_summ_keyword_present(self, summary: str):
         # Given the summary check if any keyword is present
         # return any(w in summary for w in self.keywords) or any(w.lower() in summary.lower() for w in self.keywords_i)
+        match_words_i = [
+            w for w in self.keywords_i if w.lower() in summary.lower()]
+        match_word = [word for word in self.keywords if word in summary]
 
-        return [w for w in self.keywords_i if w.lower() in summary.lower()].extend([word for word in self.keywords if word in summary])
+        return match_words_i.extend(match_word)
         # match_key.extend([word for word in self.keywords if word in summary])
         # return match_key
 
@@ -195,7 +196,11 @@ class cvereport:
         # return any(w in products for w in self.product) or any(w.lower() in products.lower() for w in self.product_i)
         # Given the summary check if any keyword is present
 
-        return [w for w in self.product_i if w.lower() in products.lower()].extend([word for word in self.product if word in products])
+        match_words_i = [w for w in self.product_i if w.lower()
+                         in products.lower()]
+        match_word = [word for word in self.product if word in products]
+
+        return match_words_i.extend(match_word)
         # match_key.extend([word for word in self.product if word in products])
         # return match_key
 
