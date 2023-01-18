@@ -183,10 +183,6 @@ class cvereport:
     def is_summ_keyword_present(self, summary: str) -> list:
         # Given the summary check if any keyword is present
 
-        # return any(w in summary for w in self.keywords) or any(
-        #    w.lower() in summary.lower() for w in self.keywords_i
-        # )  # for each of the word in description keyword config, check if it exists in summary.
-
         match_key = [word for word in self.keywords_i if word.lower()
                      in summary.lower()]
         match_key.extend(
@@ -195,10 +191,6 @@ class cvereport:
 
     def is_prod_keyword_present(self, products: str) -> list:
         # Given the summary check if any keyword is present
-
-        # return any(w in products for w in self.product) or any(
-        #     w.lower() in products.lower() for w in self.product_i
-        # )
 
         match_key = [word for word in self.product_i if word.lower()
                      in products.lower()]
@@ -244,13 +236,6 @@ class cvereport:
                                 value=f"{cve_data['keywords']}", inline=False)
         except KeyError:
             pass
-        # try:
-        #     if cve_data['prodkeywords']:
-        #         embed.add_field(name=f"✅  *Product Keyword*",
-        #                         value=f"", inline=False)
-        # except KeyError:
-        #     embed.add_field(name=f"✅  *Product Keyword*",
-        #                     value=f"", inline=False)
 
         if cve_data['cvss'] != "None":
             embed.add_field(name=f"🔮  *CVSS*",
@@ -304,14 +289,6 @@ class cvereport:
                                 value=f"{cve_data['keywords']}", inline=False)
         except KeyError:
             pass
-
-        # try:
-        #     if cve_data['prodkeywords']:
-        #         embed.add_field(name=f"✅  *Product Keyword*",
-        #                         value=f"", inline=False)
-        # except KeyError:
-        #     embed.add_field(name=f"✅  *Product Keyword*",
-        #                     value=f"", inline=False)
 
         embed.add_field(
             name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
