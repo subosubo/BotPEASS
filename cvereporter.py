@@ -170,8 +170,9 @@ class cvereport:
             # list.extend from both functions
             match_keyword = []
             match_keyword = self.is_summ_keyword_present(cve['summary'])
-            match_keyword.extend(self.is_prod_keyword_present(
-                str(cve['vulnerable_configuration'])))
+            match_keyword_prod = self.is_prod_keyword_present(
+                str(cve['vulnerable_configuration']))
+            match_keyword.extend(match_keyword_prod)
 
             if cve_time > last_time and (self.valid or match_keyword):
                 cve['keywords'] = match_keyword
