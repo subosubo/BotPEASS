@@ -185,10 +185,9 @@ class cvereport:
     def is_summ_keyword_present(self, summary: str) -> list:
         # Given the summary check if any keyword is present
 
-        match_key = [word for word in self.keywords_i if word.lower()
+        match_key = [w for w in self.keywords_i if w.lower()
                      in summary.lower()]
-        match_key.extend(
-            [word for word in self.keywords if word in summary])
+        # match_key.extend([word for word in self.keywords if word in summary])
         return match_key
 
     def is_prod_keyword_present(self, products: str) -> list:
@@ -196,8 +195,7 @@ class cvereport:
 
         match_key = [word for word in self.product_i if word.lower()
                      in products.lower()]
-        match_key.extend(
-            [word for word in self.product if word in products])
+        # match_key.extend([word for word in self.product if word in products])
         return match_key
 
     def search_exploits(self, cve: str) -> list:
