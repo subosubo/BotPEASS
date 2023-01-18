@@ -156,7 +156,7 @@ async def itscheckintime():
         # Start loading time of last checked ones
         cve.load_lasttimes()
 
-        # Find a publish new CVEs
+        # get new and modified CVEs that matches the keyword
         cve.get_new_cves()
         cve.get_modified_cves()
 
