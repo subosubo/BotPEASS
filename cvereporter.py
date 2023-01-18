@@ -187,7 +187,7 @@ class cvereport:
         # Given the summary check if any keyword is present
         # return any(w in summary for w in self.keywords) or any(w.lower() in summary.lower() for w in self.keywords_i)
 
-        return [w for w in self.keywords_i if w.lower() in summary.lower()]
+        return [w for w in self.keywords_i if w.lower() in summary.lower()].extend([word for word in self.keywords if word in summary])
         # match_key.extend([word for word in self.keywords if word in summary])
         # return match_key
 
@@ -195,7 +195,7 @@ class cvereport:
         # return any(w in products for w in self.product) or any(w.lower() in products.lower() for w in self.product_i)
         # Given the summary check if any keyword is present
 
-        return [w for w in self.product_i if w.lower() in products.lower()]
+        return [w for w in self.product_i if w.lower() in products.lower()].extend([word for word in self.product if word in products])
         # match_key.extend([word for word in self.product if word in products])
         # return match_key
 
