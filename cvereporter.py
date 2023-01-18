@@ -242,14 +242,20 @@ class cvereport:
             timestamp=datetime.datetime.now(),
             color=Color.blue(),
         )
-
-        if cve_data['keywords']:
+        try:
+            if cve_data['keywords']:
+                embed.add_field(name=f"✅  *Keyword*",
+                                value=f"{cve_data['keywords']}", inline=False)
+        except KeyError:
             embed.add_field(name=f"✅  *Keyword*",
                             value=f"{cve_data['keywords']}", inline=False)
-
-        if cve_data['prodkeywords']:
+        try:
+            if cve_data['prodkeywords']:
+                embed.add_field(name=f"✅  *Product Keyword*",
+                                value=f"", inline=False)
+        except KeyError:
             embed.add_field(name=f"✅  *Product Keyword*",
-                            value=f"{cve_data['prodkeywords']}", inline=False)
+                            value=f"", inline=False)
 
         if cve_data['cvss'] != "None":
             embed.add_field(name=f"🔮  *CVSS*",
