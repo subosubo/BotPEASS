@@ -247,13 +247,13 @@ class cvereport:
             if cve_data['keywords']:
                 keyw = ", ".join(str(x) for x in cve_data['keywords'])
                 embed.add_field(name=f"✅  *Keywords*",
-                                value=f"{keyw}", inline=False)
+                                value=f"{keyw}", inline=True)
         except KeyError:
             pass
 
-        if cve_data['cvss'] != "None":
-            embed.add_field(name=f"🔮  *CVSS*",
-                            value=f"{cve_data['cvss']}", inline=True)
+        # if cve_data['cvss'] != "None":
+        #     embed.add_field(name=f"🔮  *CVSS*",
+        #                     value=f"{cve_data['cvss']}", inline=True)
 
         embed.add_field(
             name=f"📅  *Published*", value=f"{cve_data['Published']}", inline=True
@@ -301,7 +301,7 @@ class cvereport:
             if cve_data['keywords']:
                 keyw = ", ".join(str(x) for x in cve_data['keywords'])
                 embed.add_field(name=f"✅  *Keywords*",
-                                value=f"{keyw}", inline=False)
+                                value=f"{keyw}", inline=True)
         except KeyError:
             pass
 
