@@ -168,6 +168,7 @@ class cvereport:
             # caters to multiple new cves with same published/modified time
 
             # list.extend from both functions
+            match_keyword = []
             match_keyword = self.is_summ_keyword_present(cve['summary'])
             match_keyword.extend(self.is_prod_keyword_present(
                 str(cve['vulnerable_configuration'])))
@@ -238,8 +239,9 @@ class cvereport:
         )
         try:
             if cve_data['keywords']:
+                keyw = ", ".join(str(x) for x in cve_data['keywords'])
                 embed.add_field(name=f"✅  *Keywords*",
-                                value=f"{cve_data['keywords']}", inline=False)
+                                value=f"{keyw}", inline=False)
         except KeyError:
             pass
 
@@ -291,8 +293,9 @@ class cvereport:
 
         try:
             if cve_data['keywords']:
+                keyw = ", ".join(str(x) for x in cve_data['keywords'])
                 embed.add_field(name=f"✅  *Keywords*",
-                                value=f"{cve_data['keywords']}", inline=False)
+                                value=f"{keyw}", inline=False)
         except KeyError:
             pass
 
