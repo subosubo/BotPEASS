@@ -243,8 +243,7 @@ class cvereport:
                 embed.add_field(name=f"✅  *Keywords*",
                                 value=f"{cve_data['keywords']}", inline=False)
         except KeyError:
-            embed.add_field(name=f"✅  *Keywords*",
-                            value=f"", inline=False)
+            pass
         # try:
         #     if cve_data['prodkeywords']:
         #         embed.add_field(name=f"✅  *Product Keyword*",
@@ -304,8 +303,8 @@ class cvereport:
                 embed.add_field(name=f"✅  *Keywords*",
                                 value=f"{cve_data['keywords']}", inline=False)
         except KeyError:
-            embed.add_field(name=f"✅  *Keywords*",
-                            value=f"", inline=False)
+            pass
+
         # try:
         #     if cve_data['prodkeywords']:
         #         embed.add_field(name=f"✅  *Product Keyword*",
