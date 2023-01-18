@@ -166,13 +166,16 @@ class cvereport:
             # last_time is from config
             # cve time is api data
             # caters to multiple new cves with same published/modified time
+
+            match_keyword = self.is_summ_keyword_present(cve['summary'])
+            match_prod_keyword = self.is_prod_keyword_present(
+                str(cve['vulnerable_configuration']))
+
             if cve_time > last_time and (
-                self.valid
-                or self.is_summ_keyword_present(cve['summary'])
-                or self.is_prod_keyword_present(
-                    str(cve['vulnerable_configuration'])
-                )
+                self.valid or match_keyword or match_prod_keyword
             ):
+                cve['keywords'] = match_keyword
+                cve['prodkeywords'] = match_prod_keyword
                 filtered_cves.append(cve)
 
             if cve_time > new_last_time:
@@ -180,19 +183,31 @@ class cvereport:
 
         return filtered_cves, new_last_time
 
-    def is_summ_keyword_present(self, summary: str):
+    def is_summ_keyword_present(self, summary: str) -> list:
         # Given the summary check if any keyword is present
 
-        return any(w in summary for w in self.keywords) or any(
-            w.lower() in summary.lower() for w in self.keywords_i
-        )  # for each of the word in description keyword config, check if it exists in summary.
+        # return any(w in summary for w in self.keywords) or any(
+        #    w.lower() in summary.lower() for w in self.keywords_i
+        # )  # for each of the word in description keyword config, check if it exists in summary.
 
-    def is_prod_keyword_present(self, products: str):
+        match_key = [word for word in self.keywords_i if word.lower()
+                     in summary.lower()]
+        match_key.extend(
+            [word for word in self.keywords if word in summary])
+        return match_key
+
+    def is_prod_keyword_present(self, products: str) -> list:
         # Given the summary check if any keyword is present
 
-        return any(w in products for w in self.product) or any(
-            w.lower() in products.lower() for w in self.product_i
-        )
+        # return any(w in products for w in self.product) or any(
+        #     w.lower() in products.lower() for w in self.product_i
+        # )
+
+        match_key = [word for word in self.product_i if word.lower()
+                     in products.lower()]
+        match_key.extend(
+            [word for word in self.product if word in products])
+        return match_key
 
     def search_exploits(self, cve: str) -> list:
         # Given a CVE it will search for public exploits to abuse it
@@ -227,6 +242,14 @@ class cvereport:
             timestamp=datetime.datetime.now(),
             color=Color.blue(),
         )
+
+        if cve_data['keywords']:
+            embed.add_field(name=f"✅  *Keyword*",
+                            value=f"{cve_data['keywords']}", inline=False)
+
+        if cve_data['prodkeywords']:
+            embed.add_field(name=f"✅  *Product Keyword*",
+                            value=f"{cve_data['prodkeywords']}", inline=False)
 
         if cve_data['cvss'] != "None":
             embed.add_field(name=f"🔮  *CVSS*",
@@ -274,6 +297,14 @@ class cvereport:
             if len(cve_data['summary']) < 400
             else cve_data['summary'][:400] + "...",
         )
+
+        if cve_data['keywords']:
+            embed.add_field(name=f"✅  *Keyword*",
+                            value=f"{cve_data['keywords']}", inline=False)
+
+        if cve_data['prodkeywords']:
+            embed.add_field(name=f"✅  *Product Keyword*",
+                            value=f"{cve_data['prodkeywords']}", inline=False)
 
         embed.add_field(
             name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
