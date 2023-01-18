@@ -167,15 +167,12 @@ class cvereport:
             # cve time is api data
             # caters to multiple new cves with same published/modified time
 
-            match_keyword = self.is_summ_keyword_present(cve['summary'])
-            match_prod_keyword = self.is_prod_keyword_present(
-                str(cve['vulnerable_configuration']))
+            # list.extend from both functions
+            match_keyword = self.is_summ_keyword_present(cve['summary']).extend(self.is_prod_keyword_present(
+                str(cve['vulnerable_configuration'])))
 
-            if cve_time > last_time and (
-                self.valid or match_keyword or match_prod_keyword
-            ):
+            if cve_time > last_time and (self.valid or match_keyword):
                 cve['keywords'] = match_keyword
-                cve['prodkeywords'] = match_prod_keyword
                 filtered_cves.append(cve)
 
             if cve_time > new_last_time:
@@ -236,26 +233,25 @@ class cvereport:
         nl = "\n"
         embed = Embed(
             title=f"🚨  *{cve_data['id']}*  🚨",
-            description=cve_data['summary']
-            if len(cve_data['summary']) < 400
-            else cve_data['summary'][:400] + "...",
+            description=cve_data['summary'] if len(
+                cve_data['summary']) < 400 else cve_data['summary'][:400] + "...",
             timestamp=datetime.datetime.now(),
             color=Color.blue(),
         )
         try:
             if cve_data['keywords']:
-                embed.add_field(name=f"✅  *Keyword*",
+                embed.add_field(name=f"✅  *Keywords*",
                                 value=f"{cve_data['keywords']}", inline=False)
         except KeyError:
-            embed.add_field(name=f"✅  *Keyword*",
+            embed.add_field(name=f"✅  *Keywords*",
                             value=f"", inline=False)
-        try:
-            if cve_data['prodkeywords']:
-                embed.add_field(name=f"✅  *Product Keyword*",
-                                value=f"", inline=False)
-        except KeyError:
-            embed.add_field(name=f"✅  *Product Keyword*",
-                            value=f"", inline=False)
+        # try:
+        #     if cve_data['prodkeywords']:
+        #         embed.add_field(name=f"✅  *Product Keyword*",
+        #                         value=f"", inline=False)
+        # except KeyError:
+        #     embed.add_field(name=f"✅  *Product Keyword*",
+        #                     value=f"", inline=False)
 
         if cve_data['cvss'] != "None":
             embed.add_field(name=f"🔮  *CVSS*",
@@ -299,25 +295,24 @@ class cvereport:
 
         embed.add_field(
             name=f"🗣 *Summary*",
-            value=cve_data['summary']
-            if len(cve_data['summary']) < 400
-            else cve_data['summary'][:400] + "...",
+            value=cve_data['summary'] if len(
+                cve_data['summary']) < 400 else cve_data['summary'][:400] + "...",
         )
 
         try:
             if cve_data['keywords']:
-                embed.add_field(name=f"✅  *Keyword*",
+                embed.add_field(name=f"✅  *Keywords*",
                                 value=f"{cve_data['keywords']}", inline=False)
         except KeyError:
-            embed.add_field(name=f"✅  *Keyword*",
+            embed.add_field(name=f"✅  *Keywords*",
                             value=f"", inline=False)
-        try:
-            if cve_data['prodkeywords']:
-                embed.add_field(name=f"✅  *Product Keyword*",
-                                value=f"", inline=False)
-        except KeyError:
-            embed.add_field(name=f"✅  *Product Keyword*",
-                            value=f"", inline=False)
+        # try:
+        #     if cve_data['prodkeywords']:
+        #         embed.add_field(name=f"✅  *Product Keyword*",
+        #                         value=f"", inline=False)
+        # except KeyError:
+        #     embed.add_field(name=f"✅  *Product Keyword*",
+        #                     value=f"", inline=False)
 
         embed.add_field(
             name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
