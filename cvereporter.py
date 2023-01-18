@@ -171,6 +171,8 @@ class cvereport:
             match_keyword = self.is_summ_keyword_present(cve['summary']).extend(self.is_prod_keyword_present(
                 str(cve['vulnerable_configuration'])))
 
+            self.logger.debug(match_keyword)
+
             if cve_time > last_time and (self.valid or match_keyword):
                 cve['keywords'] = match_keyword
                 filtered_cves.append(cve)
