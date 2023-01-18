@@ -1,13 +1,11 @@
 ALL_VALID: False
 
 DESCRIPTION_KEYWORDS_I:
-- privilege escalation
 - escalation
 - privesc
 - high integrity
 - elevated privilege
-- escalation of privilege
-- privilege escalation
+- privilege
 - " sudo "
 - " suid "
 - " pe "
