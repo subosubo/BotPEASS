@@ -1,54 +1,55 @@
 ALL_VALID: False
 
 DESCRIPTION_KEYWORDS_I:
-- escalation
-- privesc
-- high integrity
-- elevated privilege
-- privilege
+- " lxc "
+- " pe "
 - " sudo "
 - " suid "
-- " pe "
 - " UAC "
-- " lxc "
-- buffer overflow
-- user account control
 - access control vulnerability
-- remote command execution
-- command injection vulnerability
-- code execution
-- injection
-- denial of service
-- bypass
 - authentication
-- authorization
 - authorisation
-- authorized
 - authorised
+- authorization
+- authorized
+- buffer overflow
+- bypass
+- code execution
+- command injection vulnerability
+- cross site 
+- cross-site
+- denial of service
+- dom
+- elevated privilege
+- escalation
 - file inclusion
-- XXE
-- XML External Entity
+- high integrity
+- idor
+- injection
+- insecure direct object reference
+- open redirect
+- out of bounds
+- out-of-bounds
+- pollution
+- privesc
+- privilege
+- puzzling
+- race condition
+- rce
+- remote command execution
+- request forgery
+- resource manipulation
+- session hijack
+- smuggling
 - sql injection
 - sqli
-- cross-site
-- cross site 
-- xss
-- dom
-- request forgery
-- smuggling
-- pollution
-- session hijack
-- insecure direct object reference
-- idor
-- open redirect
-- variable overloading
-- puzzling
-- resource manipulation
-- race condition
-- verb tampering
 - upload
-- out-of-bounds
-- out of bounds
+- user account control
+- variable overloading
+- verb tampering
+- XML External Entity
+- xss
+- XXE
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
