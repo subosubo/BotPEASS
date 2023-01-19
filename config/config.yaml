@@ -12,8 +12,8 @@ DESCRIPTION_KEYWORDS_I:
 - " UAC "
 - " lxc "
 - buffer overflow
-- User Account Control
-- Access Control vulnerability
+- user account control
+- access control vulnerability
 - remote command execution
 - command injection vulnerability
 - code execution
@@ -28,21 +28,21 @@ DESCRIPTION_KEYWORDS_I:
 - file inclusion
 - XXE
 - XML External Entity
-- SQL injection
-- SQLi
-- Cross-Site
-- Cross Site 
-- XSS
-- Dom
-- Request Forgery
-- Smuggling
-- Pollution
-- Session hijack
-- direct Object Reference
-- IDOR
-- Open redirect
-- Variable Overloading
-- Puzzling
+- sql injection
+- sqli
+- cross-site
+- cross site 
+- xss
+- dom
+- request forgery
+- smuggling
+- pollution
+- session hijack
+- insecure direct object reference
+- idor
+- open redirect
+- variable overloading
+- puzzling
 - resource manipulation
 - race condition
 - verb tampering
@@ -55,38 +55,40 @@ DESCRIPTION_KEYWORDS:
 
 PRODUCT_KEYWORDS_I:
 - amazon
-- aws
-- atlassian
-- apple
-- azure
-- Asus
 - apache
+- apple
+- Asus
+- atlassian
+- aws
+- azure
+- chrome
 - container
 - docker
-- Git
-- Github
+- git
+- github
+- google
 - java
 - kubernetes
-- lxc
-- Linksys
-- PLC
-- MySQL 
-- MSSQL
-- npm
-- python
-- podman
-- NoSQL
-- SQL
-- TPlink
-- sudo
-- SCADA
 - kubernetes
-- wordpress
-- whatsapp
+- linksys
+- lxc
+- microsoft
+- mssql
+- mysql 
+- nosql
+- npm
+- opc
+- plc
+- podman
+- pypi
+- python
+- scada
 - signal
-- Google
+- sudo
 - telegram
-- chrome
+- tplink
+- whatsapp
+- wordpress
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
