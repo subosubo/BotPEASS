@@ -286,7 +286,7 @@ class cvereport:
         embed.add_field(
             name=f"🗣 *Summary*",
             value=cve_data['summary'] if len(
-                cve_data['summary']) < 400 else cve_data['summary'][:400] + "...",
+                cve_data['summary']) < 400 else cve_data['summary'][:400] + "...", inline=False
         )
 
         try:
