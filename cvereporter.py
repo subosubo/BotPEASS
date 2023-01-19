@@ -294,9 +294,8 @@ class cvereport:
         except KeyError:
             pass
 
-        embed.add_field(
-            name=f"📅  *Modified*", value=f"{cve_data['last-modified']}", inline=True
-        )
+        embed.add_field(name=f"📅  *Modified*",
+                        value=f"{cve_data['last-modified']}", inline=True)
 
         embed.add_field(
             name=f"More Information (_limit to 4_)",
