@@ -283,11 +283,8 @@ class cvereport:
             color=Color.gold(),
         )
 
-        embed.add_field(
-            name=f"🗣 *Summary*",
-            value=cve_data['summary'] if len(
-                cve_data['summary']) < 400 else cve_data['summary'][:400] + "...", inline=False
-        )
+        embed.add_field(name=f"🗣 *Summary*", value=cve_data['summary'] if len(
+            cve_data['summary']) < 400 else cve_data['summary'][:400] + "...", inline=False,)
 
         try:
             if cve_data['keywords']:
