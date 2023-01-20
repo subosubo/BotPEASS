@@ -21,7 +21,7 @@ DESCRIPTION_KEYWORDS_I:
 - denial of service
 - dom
 - elevated privilege
-- escalation
+- escalation of privilege
 - file inclusion
 - high integrity
 - idor
@@ -34,7 +34,7 @@ DESCRIPTION_KEYWORDS_I:
 - out-of-bounds
 - pollution
 - privesc
-- privilege
+- privilege escalation
 - puzzling
 - race condition
 - rce
