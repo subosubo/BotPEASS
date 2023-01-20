@@ -23,6 +23,7 @@ DESCRIPTION_KEYWORDS_I:
 - elevated privilege
 - escalation of privilege
 - file inclusion
+- file upload
 - high integrity
 - idor
 - injection
@@ -60,11 +61,12 @@ PRODUCT_KEYWORDS_I:
 - amazon
 - apache
 - apple
-- Asus
+- asus
 - atlassian
 - aws
 - azure
 - chrome
+- cloud
 - container
 - docker
 - git
@@ -86,6 +88,8 @@ PRODUCT_KEYWORDS_I:
 - pypi
 - python
 - scada
+- sharepoint
+- onedrive
 - signal
 - sudo
 - telegram
