@@ -200,10 +200,10 @@ class cvereport:
 
             match_words_i.extend(match_words)
 
+            return match_words_i
+
         except Exception as e:
             self.logger.error(e)
-
-        return match_words_i
 
     def is_prod_keyword_present(self, products: str):
         # Given the summary check if any keyword is present
