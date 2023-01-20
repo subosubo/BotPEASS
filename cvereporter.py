@@ -50,9 +50,11 @@ class cvereport:
                 keywords_config = yaml.safe_load(yaml_file)
                 self.logger.info(f"Loaded keywords: {keywords_config}")
                 self.valid = keywords_config['ALL_VALID']
-                self.keywords_i = keywords_config['DESCRIPTION_KEYWORDS_I']
+                self.keywords_i = [
+                    key.lower() for key in keywords_config['DESCRIPTION_KEYWORDS_I']]
                 self.keywords = keywords_config['DESCRIPTION_KEYWORDS']
-                self.product_i = keywords_config['PRODUCT_KEYWORDS_I']
+                self.product_i = [
+                    prod.lower() for prod in keywords_config['PRODUCT_KEYWORDS_I']]
                 self.product = keywords_config['PRODUCT_KEYWORDS']
             yaml_file.close()
         except Exception as e:
@@ -190,7 +192,7 @@ class cvereport:
         # Parenthese around the keywords in the pattern is a capturing group which will return the exact matched word instead of the match with | in it.
         try:
             pattern_i = re.compile(
-                r"\b(" + "|".join(self.keywords_i.lower()) + r")\b")
+                r"\b(" + "|".join(self.keywords_i) + r")\b")
             matches_i = pattern_i.finditer(summary.lower())
 
             match_words_i = [match.group() for match in matches_i]
@@ -211,7 +213,7 @@ class cvereport:
         # Given the summary check if any keyword is present
         try:
             pattern_i = re.compile(
-                r"\b(" + "|".join(self.product_i.lower()) + r")\b")
+                r"\b(" + "|".join(self.product_i) + r")\b")
             matches_i = pattern_i.finditer(products.lower())
 
             match_words_i = [match.group() for match in matches_i]
