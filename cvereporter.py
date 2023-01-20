@@ -186,37 +186,44 @@ class cvereport:
         # Given the summary check if any keyword is present
         # '\b' is a word boundary, which ensures that the keyword is matched only when it appears as a whole word.
         # Parenthese around the keywords in the pattern is a capturing group which will return the exact matched word instead of the match with | in it.
-        pattern_i = re.compile(
-            r"\b(" + "|".join(self.keywords_i.lower()) + r")\b")
-        matches_i = pattern_i.finditer(summary.lower())
+        try:
+            pattern_i = re.compile(
+                r"\b(" + "|".join(self.keywords_i.lower()) + r")\b")
+            matches_i = pattern_i.finditer(summary.lower())
 
-        match_words_i = [match.group() for match in matches_i]
+            match_words_i = [match.group() for match in matches_i]
 
-        pattern = re.compile(r"\b(" + "|".join(self.keywords) + r")\b")
-        matches = pattern.finditer(summary)
+            pattern = re.compile(r"\b(" + "|".join(self.keywords) + r")\b")
+            matches = pattern.finditer(summary)
 
-        match_words = [match.group() for match in matches]
+            match_words = [match.group() for match in matches]
 
-        match_words_i.extend(match_words)
+            match_words_i.extend(match_words)
+
+        except Exception as e:
+            self.logger.error(e)
 
         return match_words_i
 
     def is_prod_keyword_present(self, products: str):
         # Given the summary check if any keyword is present
-        pattern_i = re.compile(
-            r"\b(" + "|".join(self.product_i.lower()) + r")\b")
-        matches_i = pattern_i.finditer(products.lower())
+        try:
+            pattern_i = re.compile(
+                r"\b(" + "|".join(self.product_i.lower()) + r")\b")
+            matches_i = pattern_i.finditer(products.lower())
 
-        match_words_i = [match.group() for match in matches_i]
+            match_words_i = [match.group() for match in matches_i]
 
-        pattern = re.compile(r"\b(" + "|".join(self.product) + r")\b")
-        matches = pattern.finditer(products)
+            pattern = re.compile(r"\b(" + "|".join(self.product) + r")\b")
+            matches = pattern.finditer(products)
 
-        match_words = [match.group() for match in matches]
+            match_words = [match.group() for match in matches]
 
-        match_words_i.extend(match_words)
+            match_words_i.extend(match_words)
+            return match_words_i
 
-        return match_words_i
+        except Exception as e:
+            self.logger.error(e)
 
     def search_exploits(self, cve: str) -> list:
         # Given a CVE it will search for public exploits to abuse it
