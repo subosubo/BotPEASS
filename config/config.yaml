@@ -27,6 +27,8 @@ DESCRIPTION_KEYWORDS_I:
 - idor
 - injection
 - insecure direct object reference
+- man in the middle
+- man-in-the-middle
 - open redirect
 - out of bounds
 - out-of-bounds

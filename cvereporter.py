@@ -1,15 +1,15 @@
+from enum import Enum
+from os.path import join
+from discord import Color, Embed
 import datetime
 import json
 import logging
 import pathlib
 import sys
-from enum import Enum
-from os.path import join
-
 import pytz
 import requests
 import yaml
-from discord import Color, Embed
+import re
 
 utc = pytz.UTC
 
@@ -184,22 +184,37 @@ class cvereport:
 
     def is_summ_keyword_present(self, summary: str):
         # Given the summary check if any keyword is present
-        match_words_i = [
-            w for w in self.keywords_i if w.lower() in summary.lower()]
-        match_word = [word for word in self.keywords if word in summary]
+        # '\b' is a word boundary, which ensures that the keyword is matched only when it appears as a whole word.
+        # Parenthese around the keywords in the pattern is a capturing group which will return the exact matched word instead of the match with | in it.
+        pattern_i = re.compile(
+            r"\b(" + "|".join(self.keywords_i.lower()) + r")\b")
+        matches_i = pattern_i.finditer(summary.lower())
 
-        match_words_i.extend(match_word)
+        match_words_i = [match.group() for match in matches_i]
+
+        pattern = re.compile(r"\b(" + "|".join(self.keywords) + r")\b")
+        matches = pattern.finditer(summary)
+
+        match_words = [match.group() for match in matches]
+
+        match_words_i.extend(match_words)
 
         return match_words_i
 
     def is_prod_keyword_present(self, products: str):
         # Given the summary check if any keyword is present
+        pattern_i = re.compile(
+            r"\b(" + "|".join(self.product_i.lower()) + r")\b")
+        matches_i = pattern_i.finditer(products.lower())
 
-        match_words_i = [w for w in self.product_i if w.lower()
-                         in products.lower()]
-        match_word = [word for word in self.product if word in products]
+        match_words_i = [match.group() for match in matches_i]
 
-        match_words_i.extend(match_word)
+        pattern = re.compile(r"\b(" + "|".join(self.product) + r")\b")
+        matches = pattern.finditer(products)
+
+        match_words = [match.group() for match in matches]
+
+        match_words_i.extend(match_words)
 
         return match_words_i
 
