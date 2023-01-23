@@ -1,4 +1,4 @@
-All credits goes to carlospolop
+Credits goes to carlospolop
 
 Description (According to ChatGPT, Kudos)
 This script is used to:
