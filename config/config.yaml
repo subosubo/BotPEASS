@@ -18,6 +18,7 @@ DESCRIPTION_KEYWORDS_I:
 - command injection vulnerability
 - cross site 
 - cross-site
+- csrf
 - denial of service
 - dom
 - default password
@@ -43,6 +44,9 @@ DESCRIPTION_KEYWORDS_I:
 - open redirect
 - out of bounds
 - out-of-bounds
+- out of date
+- outdated
+- path traversal
 - pollution
 - privesc
 - privilege escalation
@@ -54,15 +58,16 @@ DESCRIPTION_KEYWORDS_I:
 - resource manipulation
 - session hijack
 - smuggling
+- spoofing
 - sql injection
 - sqli
 - upload
 - user account control
 - variable overloading
 - verb tampering
-- XML External Entity
+- xml external entity
 - xss
-- XXE
+- xxe
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
