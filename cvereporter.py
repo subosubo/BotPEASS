@@ -103,9 +103,10 @@ class cvereport:
     ################## SEARCH CVES ####################
 
     def remove_duplicate(self, orig_list: list) -> list:
-        unique_list = list(set(orig_list))
+        uniq_list = [i for n, i in enumerate(
+            orig_list) if i not in orig_list[n + 1:]]
 
-        return unique_list
+        return uniq_list
 
     def request_cves(self, tt_filter: time_type) -> dict:
         # Given the headers for the API retrive CVEs from cve.circl.lu
@@ -195,14 +196,14 @@ class cvereport:
         # Given the summary check if any keyword is present
         # '\b' is a word boundary, which ensures that the keyword is matched only when it appears as a whole word.
         # Parenthese around the keywords in the pattern is a capturing group which will return the exact matched word instead of the match with | in it.
+        # re.search instead of
         try:
             pattern_i = re.compile(
                 r"\b(" + "|".join(self.keywords_i) + r")\b")
             matches_i = pattern_i.finditer(summary.lower())
-
             match_words_i = [match.group() for match in matches_i]
-            pattern = re.compile(r"\b(" + "|".join(self.keywords) + r")\b")
 
+            pattern = re.compile(r"\b(" + "|".join(self.keywords) + r")\b")
             matches = pattern.finditer(summary)
             match_words = [match.group() for match in matches]
 
@@ -220,15 +221,16 @@ class cvereport:
             pattern_i = re.compile(
                 r"\b(" + "|".join(self.product_i) + r")\b")
             matches_i = pattern_i.finditer(products.lower())
-
             match_words_i = [match.group() for match in matches_i]
-            pattern = re.compile(r"\b(" + "|".join(self.product) + r")\b")
 
+            pattern = re.compile(r"\b(" + "|".join(self.product) + r")\b")
             matches = pattern.finditer(products)
             match_words = [match.group() for match in matches]
 
             match_words_i.extend(match_words)
+            print(f"orig:{match_words_i}")
             match_words_i = self.remove_duplicate(match_words_i)
+            print(f"remove:{match_words_i}")
 
             return match_words_i
 
@@ -320,8 +322,8 @@ class cvereport:
 
         try:
             if cve_data['keywords']:
-                print(f"{cve_data['id']}")
-                print(f"{cve_data['keywords']}")
+                # print(f"{cve_data['id']}")
+                # print(f"{cve_data['keywords']}")
                 keyw = ", ".join(str(x) for x in cve_data['keywords'])
                 embed.add_field(name=f"✅  *Keywords*",
                                 value=f"{keyw}", inline=True)
