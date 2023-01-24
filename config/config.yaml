@@ -20,11 +20,21 @@ DESCRIPTION_KEYWORDS_I:
 - cross-site
 - denial of service
 - dom
+- default password
+- default credential
+- default key
 - elevated privilege
 - escalation of privilege
+- enumeration
 - file inclusion
 - file upload
 - high integrity
+- hardcoded credential
+- hard coded credential
+- hardcoded password
+- hard coded password
+- hardcoded key
+- hard coded key
 - idor
 - injection
 - insecure direct object reference
@@ -68,6 +78,7 @@ PRODUCT_KEYWORDS_I:
 - chrome
 - cloud
 - container
+- curl
 - docker
 - git
 - github
@@ -85,9 +96,11 @@ PRODUCT_KEYWORDS_I:
 - opc
 - plc
 - podman
+- printer
 - pypi
 - python
 - scada
+- samsung
 - sharepoint
 - onedrive
 - signal
