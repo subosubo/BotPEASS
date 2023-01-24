@@ -103,7 +103,6 @@ class cvereport:
     ################## SEARCH CVES ####################
 
     def remove_duplicate(self, orig_list: list) -> list:
-        print(f"orig_list:{orig_list}")
         unique_list = list(set(orig_list))
 
         return unique_list
@@ -202,13 +201,13 @@ class cvereport:
             matches_i = pattern_i.finditer(summary.lower())
 
             match_words_i = [match.group() for match in matches_i]
-
             pattern = re.compile(r"\b(" + "|".join(self.keywords) + r")\b")
-            matches = pattern.finditer(summary)
 
+            matches = pattern.finditer(summary)
             match_words = [match.group() for match in matches]
 
             match_words_i.extend(match_words)
+            match_words_i = self.remove_duplicate(match_words_i)
 
             return match_words_i
 
@@ -223,13 +222,14 @@ class cvereport:
             matches_i = pattern_i.finditer(products.lower())
 
             match_words_i = [match.group() for match in matches_i]
-
             pattern = re.compile(r"\b(" + "|".join(self.product) + r")\b")
-            matches = pattern.finditer(products)
 
+            matches = pattern.finditer(products)
             match_words = [match.group() for match in matches]
 
             match_words_i.extend(match_words)
+            match_words_i = self.remove_duplicate(match_words_i)
+
             return match_words_i
 
         except Exception as e:
