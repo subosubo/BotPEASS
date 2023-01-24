@@ -230,9 +230,7 @@ class cvereport:
             match_words = [match.group() for match in matches]
 
             match_words_i.extend(match_words)
-            print(f"orig:{match_words_i}")
             match_words_i = self.remove_duplicate(match_words_i)
-            print(f"remove:{match_words_i}")
 
             return match_words_i
 
