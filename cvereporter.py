@@ -173,6 +173,8 @@ class cvereport:
             )
 
             # list.extend from both functions
+            match_keyword, match_keyword_prod = []
+
             match_keyword = self.is_summ_keyword_present(cve['summary'])
             match_keyword_prod = self.is_prod_keyword_present(
                 str(cve['vulnerable_configuration']))
