@@ -103,6 +103,7 @@ class cvereport:
     ################## SEARCH CVES ####################
 
     def remove_duplicate(self, orig_list: list) -> list:
+        print(f"orig_list:{orig_list}")
         unique_list = list(set(orig_list))
 
         return unique_list
