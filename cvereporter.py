@@ -177,12 +177,12 @@ class cvereport:
                 str(cve['vulnerable_configuration']))
             match_keyword.extend(match_keyword_prod)
 
-            match_keyword = self.remove_duplicate(match_keyword)
+            unique_list = self.remove_duplicate(match_keyword)
 
             # last_time is from config
             # cve time is api data
             # caters to multiple new cves with same published/modified timev
-            if cve_time > last_time and (self.valid or match_keyword):
+            if cve_time > last_time and (self.valid or unique_list):
                 cve['keywords'] = match_keyword
                 filtered_cves.append(cve)
 
