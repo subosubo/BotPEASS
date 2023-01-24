@@ -103,10 +103,9 @@ class cvereport:
     ################## SEARCH CVES ####################
 
     def remove_duplicate(self, orig_list: list) -> list:
-        new_list = [i for n, i in enumerate(
-            orig_list) if i not in orig_list[n + 1:]]
+        unique_list = list(set(orig_list))
 
-        return new_list
+        return unique_list
 
     def request_cves(self, tt_filter: time_type) -> dict:
         # Given the headers for the API retrive CVEs from cve.circl.lu
