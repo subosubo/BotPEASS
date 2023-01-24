@@ -12,6 +12,7 @@ DESCRIPTION_KEYWORDS_I:
 - authorised
 - authorization
 - authorized
+- api
 - buffer overflow
 - bypass
 - code execution
@@ -29,6 +30,7 @@ DESCRIPTION_KEYWORDS_I:
 - enumeration
 - file inclusion
 - file upload
+- forge
 - high integrity
 - hardcoded credential
 - hard coded credential
@@ -39,9 +41,14 @@ DESCRIPTION_KEYWORDS_I:
 - idor
 - injection
 - insecure direct object reference
+- insecure permission
+- json web token
+- jwt
 - man in the middle
 - man-in-the-middle
+- mitm
 - open redirect
+- oauth
 - out of bounds
 - out-of-bounds
 - out of date
@@ -61,6 +68,7 @@ DESCRIPTION_KEYWORDS_I:
 - spoofing
 - sql injection
 - sqli
+- takeover
 - upload
 - user account control
 - variable overloading
@@ -89,7 +97,7 @@ PRODUCT_KEYWORDS_I:
 - github
 - google
 - java
-- kubernetes
+- kotlin
 - kubernetes
 - linksys
 - lxc
