@@ -186,7 +186,7 @@ class cvereport:
             # cve time is api data
             # caters to multiple new cves with same published/modified timev
             if cve_time > last_time and (self.valid or unique_list):
-                cve['keywords'] = match_keyword
+                cve['keywords'] = unique_list
                 filtered_cves.append(cve)
 
             if cve_time > new_last_time:
