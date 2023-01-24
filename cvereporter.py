@@ -181,6 +181,7 @@ class cvereport:
             match_keyword.extend(match_keyword_prod)
 
             unique_list = self.remove_duplicate(match_keyword)
+            print(unique_list)
 
             # last_time is from config
             # cve time is api data
