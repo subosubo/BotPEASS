@@ -319,6 +319,7 @@ class cvereport:
 
         try:
             if cve_data['keywords']:
+                print(f"{cve_data['id']}")
                 print(f"{cve_data['keywords']}")
                 keyw = ", ".join(str(x) for x in cve_data['keywords'])
                 embed.add_field(name=f"✅  *Keywords*",
