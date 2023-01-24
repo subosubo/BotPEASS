@@ -102,6 +102,12 @@ class cvereport:
 
     ################## SEARCH CVES ####################
 
+    def remove_duplicate(self, orig_list: list) -> list:
+        new_list = [i for n, i in enumerate(
+            orig_list) if i not in orig_list[n + 1:]]
+
+        return new_list
+
     def request_cves(self, tt_filter: time_type) -> dict:
         # Given the headers for the API retrive CVEs from cve.circl.lu
         now = datetime.datetime.now() - datetime.timedelta(days=1)
@@ -171,6 +177,8 @@ class cvereport:
             match_keyword_prod = self.is_prod_keyword_present(
                 str(cve['vulnerable_configuration']))
             match_keyword.extend(match_keyword_prod)
+
+            match_keyword = self.remove_duplicate(match_keyword)
 
             # last_time is from config
             # cve time is api data
