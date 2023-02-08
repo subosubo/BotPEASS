@@ -66,9 +66,11 @@ DESCRIPTION_KEYWORDS_I:
 - session hijack
 - smuggling
 - spoofing
+- ssrf
 - sql injection
 - sqli
 - takeover
+- template injection
 - upload
 - user account control
 - variable overloading
