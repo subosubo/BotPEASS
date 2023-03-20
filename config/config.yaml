@@ -26,6 +26,7 @@ DESCRIPTION_KEYWORDS_I:
 - default credential
 - default key
 - elevated privilege
+- elevation of privilege
 - escalation of privilege
 - enumeration
 - file inclusion
@@ -124,6 +125,8 @@ PRODUCT_KEYWORDS_I:
 - tplink
 - whatsapp
 - wordpress
+- business_objects_business_intelligence_platform
+- netweaver_application_server_for_java
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
