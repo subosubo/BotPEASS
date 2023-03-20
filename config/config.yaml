@@ -16,6 +16,7 @@ DESCRIPTION_KEYWORDS_I:
 - buffer overflow
 - bypass
 - code execution
+- code injection vulnerability
 - command injection vulnerability
 - cross site 
 - cross-site
