@@ -7,12 +7,12 @@ DESCRIPTION_KEYWORDS_I:
 - " suid "
 - " UAC "
 - access control vulnerability
+- api
 - authentication
 - authorisation
 - authorised
 - authorization
 - authorized
-- api
 - buffer overflow
 - bypass
 - code execution
@@ -21,25 +21,26 @@ DESCRIPTION_KEYWORDS_I:
 - cross site 
 - cross-site
 - csrf
-- denial of service
-- dom
-- default password
 - default credential
 - default key
+- default password
+- denial of service
+- directory traversal
+- dom
 - elevated privilege
 - elevation of privilege
-- escalation of privilege
 - enumeration
+- escalation of privilege
 - file inclusion
 - file upload
 - forge
-- high integrity
-- hardcoded credential
 - hard coded credential
-- hardcoded password
-- hard coded password
-- hardcoded key
 - hard coded key
+- hard coded password
+- hardcoded credential
+- hardcoded key
+- hardcoded password
+- high integrity
 - idor
 - injection
 - insecure direct object reference
@@ -49,12 +50,12 @@ DESCRIPTION_KEYWORDS_I:
 - man in the middle
 - man-in-the-middle
 - mitm
-- open redirect
 - oauth
+- open redirect
 - out of bounds
-- out-of-bounds
 - out of date
 - outdated
+- out-of-bounds
 - path traversal
 - pollution
 - privesc
@@ -62,18 +63,19 @@ DESCRIPTION_KEYWORDS_I:
 - puzzling
 - race condition
 - rce
-- remote command execution
 - remote code execution
+- remote command execution
 - request forgery
 - resource manipulation
 - session hijack
 - smuggling
 - spoofing
-- ssrf
 - sql injection
 - sqli
+- ssrf
 - takeover
 - template injection
+- unauthorized operations 
 - upload
 - user account control
 - variable overloading
@@ -93,6 +95,7 @@ PRODUCT_KEYWORDS_I:
 - atlassian
 - aws
 - azure
+- business_objects_business_intelligence_platform
 - chrome
 - cloud
 - container
@@ -109,26 +112,25 @@ PRODUCT_KEYWORDS_I:
 - microsoft
 - mssql
 - mysql 
+- netweaver_application_server_for_java
 - nosql
 - npm
+- onedrive
 - opc
 - plc
 - podman
 - printer
 - pypi
 - python
-- scada
 - samsung
+- scada
 - sharepoint
-- onedrive
 - signal
 - sudo
 - telegram
 - tplink
 - whatsapp
 - wordpress
-- business_objects_business_intelligence_platform
-- netweaver_application_server_for_java
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
