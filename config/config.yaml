@@ -62,6 +62,7 @@ DESCRIPTION_KEYWORDS_I:
 - race condition
 - rce
 - remote command execution
+- remote code execution
 - request forgery
 - resource manipulation
 - session hijack
